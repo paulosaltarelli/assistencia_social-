@@ -1,1 +1,26 @@
-{% extends "base.html" %}{% block content %}<section><h1>Acesso profissional</h1><form method="post">{% csrf_token %}{{ form.as_p }}<button>Entrar</button></form></section>{% endblock %}
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Acesso profissional · Gestão Social Municipal{% endblock %}
+{% block layout %}
+<div class="login-page">
+  <section class="login-intro" aria-label="Gestão Social Municipal">
+    <div class="brand"><span class="brand-mark" aria-hidden="true">S</span><span><strong>Gestão Social</strong><small>Municipal</small></span></div>
+    <div class="login-copy"><div class="login-rule"></div><h1>A gestão social mais próxima de quem precisa.</h1><p>Cadastros de famílias, cidadãos e atendimentos reunidos para apoiar o trabalho da sua equipe.</p></div>
+    <div class="login-meta">Plataforma de gestão da Assistência Social</div>
+  </section>
+  <main class="login-form-area" id="conteudo">
+    <div class="login-card">
+      <h2>Acesso profissional</h2><p>Entre com as credenciais da sua conta.</p>
+      <form method="post">
+        {% csrf_token %}
+        {% if form.non_field_errors %}<div class="form-errors" role="alert">{{ form.non_field_errors }}</div>{% endif %}
+        {% for field in form %}<div class="field"><label for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}{% if field.errors %}<div role="alert">{{ field.errors }}</div>{% endif %}</div>{% endfor %}
+        {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
+        <button type="submit">Entrar no sistema</button>
+      </form>
+      <p class="login-foot">Acesso restrito a profissionais autorizados.</p>
+    </div>
+    <div class="login-signature">Desenvolvido por <img class="vexo-logo" src="{% static 'atendimentos/vexo.png' %}" alt="Vexo"></div>
+  </main>
+</div>
+{% endblock %}
