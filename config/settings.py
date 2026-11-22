@@ -1,3 +1,4 @@
+import json
 import os
 """
 Django settings for config project.
@@ -147,6 +148,7 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 
 SOCIAL_CHAVE_INDICE = os.environ.get("SOCIAL_CHAVE_INDICE") or SECRET_KEY
 SOCIAL_MUNICIPIO_PUBLICO = os.environ.get("SOCIAL_MUNICIPIO_PUBLICO", "")
+SOCIAL_MUNICIPIOS_GEOGRAFICOS = json.loads(os.environ.get("SOCIAL_MUNICIPIOS_GEOGRAFICOS") or "{}")
 SOCIAL_HOMOLOGACAO = os.environ.get("SOCIAL_HOMOLOGACAO") == "1"
 CONTAS_SMTP_ATIVO = os.environ.get("CONTAS_SMTP_ATIVO") == "1"
 if CONTAS_SMTP_ATIVO:

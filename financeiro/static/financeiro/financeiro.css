@@ -1,53 +1,84 @@
-.fin section {
-  background: var(--branco);
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  padding: clamp(15px, 2vw, 25px);
-  margin: 16px 0;
-  min-width: 0;
-}
-.fin h2 { margin-bottom: 14px; }
-.fin .grade, .fin .acoes, .fin .lista-links {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 12px;
-}
-.fin .acoes { margin: 12px 0; }
-.fin .acoes a, .fin .voltar { font-weight: 600; }
-.fin .voltar { display: inline-block; margin-bottom: 12px; }
-.fin .grade article {
-  border-left: 3px solid var(--verde);
-  padding: 4px 12px;
-  flex: 1 1 150px;
-  color: var(--muted);
-}
-.fin .grade article > strong {
-  color: var(--ink);
-  display: block;
-  font-size: 1.35rem;
-  font-variant-numeric: tabular-nums;
-}
-.fin .campos {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr));
-  gap: 14px;
-}
-.fin .campos + .campos { margin-top: 14px; }
-.fin .campos input:not([type=checkbox]), .fin .campos select, .fin .campos textarea { width: 100%; }
+.fin { display: grid; align-content: start; gap: 18px; min-width: 0; }
+.fin h1, .fin h2, .fin h3, .fin dl, .fin dd, .fin p, .fin nav { margin: 0; }
+.fin h2 { font-size: 1.13rem; }
+.fin .fin-heading, .fin .fin-section-head, .fin .fin-actions, .fin .acoes { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; }
+.fin .fin-heading, .fin .fin-section-head { justify-content: space-between; }
+.fin-heading h1 { max-width: 55ch; }
+.fin-heading p, .fin .sem, .fin .fin-section-head > span, .fin small, .fin dt { color: var(--muted); }
+.fin-heading p { margin-top: .35rem; }
+.fin .fin-crumb a, .fin .voltar { font-size: .91rem; font-weight: 600; }
+.fin > section, .fin .fin-card, .fin .fin-filter { padding: clamp(16px, 2vw, 24px); min-width: 0; border: 1px solid var(--line); border-radius: 10px; background: var(--branco, #fff); }
+.fin .fin-card > * + *, .fin > section > * + *, .fin form > * + *, .fin .fin-filter form, .fin .fin-advanced[open] summary, .fin .fin-search small + details { margin-top: 14px; }
+.fin .fin-advanced[open] summary { margin: 0 0 12px; }
+.fin details > summary { color: var(--acao); cursor: pointer; font-weight: 600; }
+.fin .fin-filter { padding-block: 14px; }
+.fin .fin-filter summary { color: var(--ink); }
+.fin .fin-balance { display: grid; gap: 0; grid-template-columns: repeat(2,minmax(0,1fr)); color: #fff; border-color: #175247; background: #185549; }
+.fin .fin-balance > div { padding: 0 22px; margin: 0; min-width: 0; }
+.fin .fin-balance > div:first-child { border-right: 1px solid #579183; padding-left: 0; }
+.fin .fin-balance h2 { color: #e7f6f0; font-size: .95rem; font-weight: 600; }
+.fin .fin-balance strong { display: block; margin: 7px 0; font-size: clamp(21px,2.5vw,34px); line-height: 1.15; letter-spacing: -.035em; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.fin .fin-balance p { color: #cbe6dd; font-size: .85rem; }
+.fin .fin-overview { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); }
+.fin .fin-totals { display: grid; grid-template-columns: 1fr; gap: 0; }
+.fin .fin-totals > div { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; padding: 8px 0; }
+.fin .fin-totals > div + div { border-top: 1px solid var(--line); }
+.fin .fin-totals dd, .fin .fin-stage-strip dd { font-variant-numeric: tabular-nums; font-weight: 650; }
+.fin .fin-totals dd { text-align: end; white-space: nowrap; }
+.fin .fin-progress label { display: flex; justify-content: space-between; font-size: .9rem; }
+.fin progress, .fin meter { accent-color: var(--verde); height: 8px; display: block; min-width: 0; max-width: 100%; }
+.fin progress { width: 100%; }
+.fin meter { width: 72px; margin: 4px 0 0 auto; }
+.fin .fin-stage-strip, .fin .fin-detail-grid { display: grid; gap: 12px 20px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px),1fr)); }
+.fin .fin-stage-strip > div { padding-left: 12px; border-left: 2px solid #86b8ac; }
+.fin .fin-stage-strip dt, .fin .fin-detail-grid dt { font-size: .85rem; }
+.fin .fin-stage-strip dd { font-size: 1.12rem; }
+.fin .fin-detail-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 205px),1fr)); }
+.fin .fin-detail-grid dd { font-weight: 550; }
+.fin .fin-link-grid { display: grid; gap: 8px; grid-template-columns: repeat(auto-fit,minmax(min(100%,200px),1fr)); }
+.fin .fin-link-grid a { display: flex; align-items: center; justify-content: space-between; border: 1px solid var(--line); border-radius: 6px; padding: 9px 12px; text-decoration: none; font-weight: 600; }
+.fin .fin-link-grid a:hover { border-color: var(--acao); }
+.fin .fin-link-grid a::after { content: '›'; color: var(--muted); }
+.fin .fin-related { border-top: 1px solid var(--line); padding-top: 13px; }
+.fin .campos { display: grid; grid-template-columns: repeat(auto-fit,minmax(min(100%,190px),1fr)); gap: 12px 16px; }
+.fin input:not([type=checkbox]), .fin .campos select, .fin textarea { width: 100%; }
 .fin #grupo { width: auto; }
-.fin .tabela { overflow: auto; }
-.fin table { min-width: 440px; }
-.fin .moeda { white-space: nowrap; }
-.fin meter { width: 72px; }
-.fin .sem, .fin small { color: var(--muted); }
-.fin dl { display: grid; grid-template-columns: max-content 1fr; gap: 4px 16px; }
-.fin dd { margin: 0; }
-.fin details { margin-top: 8px; }
-.fin details summary { cursor: pointer; }
-.fin .lista-links { gap: 12px 22px; }
-@media (max-width: 600px) {
-  .fin dl { display: block; }
-  .fin dt { font-weight: 600; }
-  .fin dd { margin-bottom: 8px; }
+.fin .fin-search-field { display: flex; align-items: stretch; gap: 8px; margin: 5px 0; }
+.fin .fin-search-field input { flex: 1 1 auto; min-width: 0; }
+.fin .fin-advanced { border-top: 1px solid var(--line); padding-top: 12px; }
+.fin .tabela { max-width: 100%; overflow-x: auto; }
+.fin table { width: 100%; min-width: 460px; }
+.fin .fin-ledger { min-width: 730px; }
+.fin table th, .fin table td { vertical-align: top; }
+.fin table small, .fin .fin-detail-grid small, .fin .fin-card p > small { display: block; margin-top: 3px; }
+.fin .fin-number, .fin-money-table td, .fin-money-table th:not(:first-child) { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.fin .fin-record { font-weight: 650; }
+.fin .fin-status { display: inline-block; padding: 2px 6px; border-radius: 4px; background: #edf1f5; color: #34485c; font-size: .78rem; }
+.fin .fin-paid { color: #17573e; background: #e2f1e9; }
+.fin .fin-partial { color: #72530b; background: #fff1cd; }
+.fin .fin-timeline { list-style: none; padding-left: 8px; }
+.fin .fin-timeline li { position: relative; display: grid; gap: 3px; padding: 0 0 18px 16px; border-left: 1px solid #bcd3cb; }
+.fin .fin-timeline li:last-child { padding-bottom: 0; }
+.fin .fin-timeline li::before { content: ''; position: absolute; top: 5px; left: -4px; width: 7px; height: 7px; border-radius: 50%; background: var(--verde); }
+.fin .fin-timeline details { font-size: .9rem; }
+.fin .fin-timeline p { padding: 8px; background: var(--fundo); overflow-wrap: anywhere; }
+.fin .sem { padding-block: .25rem; }
+@media (max-width:680px) {
+  .fin { gap: 12px; }
+  .fin .fin-balance { grid-template-columns: 1fr; }
+  .fin .fin-balance > div { padding: 0; }
+  .fin .fin-balance > div:first-child { border-right: 0; border-bottom: 1px solid #579183; padding-bottom: 14px; }
+  .fin .fin-balance > div + div { padding-top: 14px; }
+  .fin .fin-totals>div { flex-wrap: wrap; }
+  .fin .fin-stage-strip { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .fin .fin-stage-strip dd { font-size: .96rem; overflow-wrap: anywhere; }
+}
+.fin .fin-receipt-amount { color: var(--verde); font-size: clamp(1.15rem,2vw,1.6rem); font-variant-numeric: tabular-nums; }
+@media (max-width: 680px) {
+  .fin .fin-ledger, .fin .fin-ledger tbody { display: block; min-width: 0; }
+  .fin .fin-ledger thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .fin .fin-ledger tr { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px 12px; padding: 15px 0; border-top: 1px solid var(--line); }
+  .fin .fin-ledger td { display: block; min-width: 0; padding: 0; border: 0; text-align: left; overflow-wrap: anywhere; white-space: normal; }
+  .fin .fin-ledger td:first-child { grid-column: 1 / -1; }
+  .fin .fin-ledger td[data-label]::before { content: attr(data-label); display: block; margin-bottom: 2px; color: var(--muted); font-size: .8rem; }
 }

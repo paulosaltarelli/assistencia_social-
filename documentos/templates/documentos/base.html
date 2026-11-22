@@ -1,0 +1,4 @@
+{% extends "app_shell.html" %}
+{% load static %}
+{% block estilos %}{{ block.super }}<link rel="stylesheet" href="{% static 'documentos/acervo.css' %}">{% endblock %}
+{% block conteudo %}<div class="acervo">{% block acervo %}{% endblock %}</div>{% endblock %}

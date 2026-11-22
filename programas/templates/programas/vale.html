@@ -1,8 +1,15 @@
 {% extends "app_shell.html" %}
+{% load static %}
+{% block estilos %}<link rel="stylesheet" href="{% static 'programas/ficha.css' %}">{% endblock %}
 {% block conteudo %}
-<h1>Vale-Alimentação Municipal</h1><p><a href="{% url 'programas:vales' %}">Voltar às concessões</a> · <a href="{% url 'documentos:vinculo' 'vale' objeto.pk %}">Documentos da concessão</a></p>
-<section class="panel"><dl><dt>Protocolo da origem</dt><dd><code>{{ objeto.pk }}</code></dd><dt>Titular e família</dt><dd>{{ objeto.cidadao.nome }} · {{ objeto.familia }}</dd><dt>Situação</dt><dd>{{ objeto.get_situacao_display }}</dd><dt>Valor / periodicidade</dt><dd>R$ {{ objeto.valor }} · {{ objeto.get_periodicidade_display }}</dd><dt>Solicitação</dt><dd>{{ objeto.solicitado_em|date:'d/m/Y' }}</dd><dt>Inclusão</dt><dd>{{ objeto.incluido_em|date:'d/m/Y H:i'|default:'Aguardando inclusão' }}</dd><dt>Atualizado em</dt><dd>{{ objeto.atualizado_em|date:'d/m/Y H:i' }}</dd></dl></section>
+<nav aria-label="Navegação da solicitação"><a href="{% url 'programas:vales' %}">Voltar às concessões</a> · {% if 'documentos.ver' in direitos %}<a href="{% url 'documentos:vinculo' 'vale' objeto.pk %}">Documentos da concessão</a>{% endif %}</nav>
+<header class="beneficio-cab"><div><h1>Vale-Alimentação Municipal</h1><p>{{ objeto.familia }} · {{ objeto.cidadao.nome|default:"Solicitação familiar" }}</p></div><strong class="beneficio-estado">{{ objeto.get_situacao_display }}</strong></header>
+<div class="beneficio-corpo"><div>
 {% if pode_editar %}<section class="panel"><h2>Atualizar situação e valor</h2><form method="post">{% csrf_token %}{{ form.as_p }}<button>Salvar alteração fundamentada</button></form></section>{% endif %}
 {% if pode_vincular_financeiro %}<p><a class="button secondary" href="{% url 'financeiro:nova_despesa' %}?origem_tipo=vale&amp;origem_id={{ objeto.pk }}">Criar despesa vinculada a esta origem</a></p>{% endif %}
-{% include 'programas/historico.html' %}
+{% include 'programas/historico.html' %}</div><aside><section class="panel"><h2>Detalhes da solicitação</h2><dl class="beneficio-fatos"><div><dt>Valor / periodicidade</dt><dd>R$ {{ objeto.valor }} · {{ objeto.get_periodicidade_display }}</dd></div>
+<div><dt>Solicitação</dt><dd>{{ objeto.solicitado_em|date:'d/m/Y' }}</dd></div>
+<div><dt>Inclusão</dt><dd>{{ objeto.incluido_em|date:'d/m/Y H:i'|default:'Aguardando inclusão' }}</dd></div>
+<div><dt>Atualizado em</dt><dd>{{ objeto.atualizado_em|date:'d/m/Y H:i' }}</dd></div>
+</dl><details><summary>Protocolo da origem</summary><code>{{ objeto.pk }}</code></details></section></aside></div>
 {% endblock %}

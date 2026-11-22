@@ -1,0 +1,3 @@
+{% extends "app_shell.html" %}{% load static %}
+{% block estilos %}{{ block.super }}<link rel="stylesheet" href="{% static 'contas/contas.css' %}">{% endblock %}
+{% block conteudo %}<div class="ca-workspace">{% block contas %}{% endblock %}</div><script src="{% static 'contas/contas.js' %}" defer></script>{% endblock %}

@@ -1,0 +1,1471 @@
+{
+  "versao": 1,
+  "municipio": {
+    "codigo_ibge": "3157336",
+    "nome": "Santa Cruz de Minas",
+    "uf": "MG"
+  },
+  "proveniencia": {
+    "fonte": "Municipal Brazilian Geodata — fonte secundária, origem IBGE declarada pelo publicador",
+    "url": "https://raw.githubusercontent.com/luizpedone/municipal-brazilian-geodata/e85ba38c0c7d5acda8d8878099a7f321dddefa33/data/MG.json",
+    "consultado_em": "2026-11-22T11:56:18.614138+00:00",
+    "licenca": "MIT",
+    "estado": "verificado_secundario",
+    "fonte_id": "municipal_brazilian_geodata"
+  },
+  "fontes": [
+    {
+      "id": "municipal_brazilian_geodata",
+      "fonte": "Municipal Brazilian Geodata — fonte secundária, origem IBGE declarada pelo publicador",
+      "url": "https://raw.githubusercontent.com/luizpedone/municipal-brazilian-geodata/e85ba38c0c7d5acda8d8878099a7f321dddefa33/data/MG.json",
+      "repositorio": "https://github.com/luizpedone/municipal-brazilian-geodata",
+      "commit": "e85ba38c0c7d5acda8d8878099a7f321dddefa33",
+      "consultado_em": "2026-11-22T11:56:18.614138+00:00",
+      "licenca": "MIT",
+      "licenca_texto": "MIT License\n\nCopyright (c) 2017 Luiz Pedone\n\nPermission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the \"Software\"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all\ncopies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\nSOFTWARE.\n",
+      "licenca_url": "https://raw.githubusercontent.com/luizpedone/municipal-brazilian-geodata/e85ba38c0c7d5acda8d8878099a7f321dddefa33/LICENSE",
+      "origem_declarada": "Dados geográficos do IBGE, conforme README do publicador.",
+      "natureza": "publicador_secundario",
+      "estado": "verificado_secundario",
+      "data_referencia_malha": null,
+      "sha256_arquivo_origem": "3edb02887b5b9ecee0217c168fcbc94e8f1142baa894d20ea1f8baee6a4cd834",
+      "observacao": "Fonte secundária consultada e recorte validado. Data da malha original e atualização frente ao IBGE atual não confirmadas.",
+      "sha256_recorte_geojson": "cd232d7ba62b2ed467deb9c5b40ece672dd895410e36e916d5f0b9b087af6945"
+    },
+    {
+      "id": "npm_ibge_poligonos",
+      "fonte": "ibge-cidades-com-poligonos 1.0.0",
+      "url": "https://registry.npmjs.org/ibge-cidades-com-poligonos/-/ibge-cidades-com-poligonos-1.0.0.tgz",
+      "consultado_em": "2026-11-22T11:56:18.614138+00:00",
+      "licenca": "ISC declarada no pacote; publicador declara dados IBGE públicos no README",
+      "estado": "verificado_secundario_apenas_identificacao",
+      "integridade_npm": "sha512-wUMGG1k5gNm7TQzxxspsw9s+lYLNxOrAfCurib4bJ00lkWm0jqRLvvxLAbPE787tiGMw7l8G9rVLqPYf2P+UAA==",
+      "observacao": "Usado para corroborar código/nome/UF. Geometria simplificada desse pacote não foi escolhida para o mapa."
+    },
+    {
+      "id": "candeia_cnefe_2022",
+      "fonte": "IBGE CNEFE Censo 2022, índice secundário Candeia",
+      "url": "https://dados.lucasrikelmi.dev/cnefe2022/v1/MG/3157336.json.gz",
+      "manifesto_url": "https://dados.lucasrikelmi.dev/cnefe2022/v1/manifesto.json",
+      "manifesto_sha256": "d886a363a1906bf6fbd4ce532b049b8696567d9e674eac5ee676310f03db29ba",
+      "sha256_arquivo_origem": "304fd7c4fe9e1b8baad892a63de8bfb99615ed792d78d05dd6818a1beefd3196",
+      "documentacao_url": "https://raw.githubusercontent.com/LucasRikelmi/candeia/685c19c479d84b1ae97f0c6b46989945e0979bb0/DADOS.md",
+      "documentacao_sha256": "c9fc5dd0374a8d8b6cababd207c96fb853126a65f890f2ddb1e28a236289cc14",
+      "pacote": "candeia",
+      "versao_pacote_consultada": "1.2.0",
+      "natureza": "indice_secundario_derivado_do_CNEFE_IBGE",
+      "estado": "verificado_secundario_hash_manifesto",
+      "ano_referencia": 2022,
+      "consultado_em": "2026-11-22T12:12:45.111982+00:00",
+      "licenca": "CC-BY-4.0",
+      "licenca_url": "https://creativecommons.org/licenses/by/4.0/deed.pt-br",
+      "atribuicao": "Dados: IBGE, Cadastro Nacional de Endereços para Fins Estatísticos (CNEFE), Censo Demográfico 2022. Índice: Candeia (https://github.com/LucasRikelmi/candeia), CC BY 4.0.",
+      "transformacoes": [
+        "Seleção exclusiva do município 3157336.",
+        "Pares únicos de tipo de via, nome, localidade e CEP.",
+        "Capitalização para exibição sem reintroduzir acentos ausentes na fonte normalizada.",
+        "Vias sem denominação identificadas como genéricas foram omitidas das sugestões.",
+        "Referências geográficas calculadas por média de coordenadas públicas distintas por localidade, com limiar mínimo de 10 e conferência no contorno municipal de referência.",
+        "Números, quadras, lotes, complementos e coordenadas de endereços individuais não foram incorporados ao catálogo."
+      ],
+      "limites": [
+        "Os rótulos são localidades de endereço do CNEFE, sem confirmação de bairros administrativos.",
+        "Não comprova denominação ou CEP vigente em 2026.",
+        "Arquivo secundário conferido contra o manifesto do publicador. A comparação direta com o arquivo original do IBGE segue pendente."
+      ],
+      "volume_fonte": {
+        "entradas_no_indice": 4197,
+        "vias_normalizadas": 91
+      },
+      "volume_derivado": {
+        "pares_logradouro_localidade_cep": 124,
+        "localidades": 8,
+        "referencias_agregadas": 6
+      },
+      "documentacao_commit": "685c19c479d84b1ae97f0c6b46989945e0979bb0",
+      "atribuicao_alteracoes": "Derivação Vexo Gestão Social Municipal: pares de endereço deduplicados, capitalização e médias geográficas por localidade. Números e pontos de endereços individuais excluídos."
+    }
+  ],
+  "limite_municipal": {
+    "arquivo": "limite_santa_cruz_de_minas.geojson",
+    "estado": "verificado",
+    "nivel_verificacao": "fonte_secundaria_integridade_e_geometria",
+    "fonte_id": "municipal_brazilian_geodata",
+    "bbox": [
+      -44.2359,
+      -21.1285,
+      -44.1989,
+      -21.1137
+    ],
+    "crs": "WGS84 longitude/latitude (GeoJSON)",
+    "vertices": 36,
+    "data_referencia_malha": null,
+    "sha256": "cd232d7ba62b2ed467deb9c5b40ece672dd895410e36e916d5f0b9b087af6945"
+  },
+  "bairros": [
+    {
+      "nome": "Alto da Serra",
+      "aliases": [
+        "alto da serra"
+      ],
+      "fonte_id": "candeia_cnefe_2022",
+      "tipo": "localidade_de_endereco_CNEFE",
+      "bairro_administrativo_confirmado": false
+    },
+    {
+      "nome": "Bela Vista",
+      "aliases": [
+        "bela vista"
+      ],
+      "fonte_id": "candeia_cnefe_2022",
+      "tipo": "localidade_de_endereco_CNEFE",
+      "bairro_administrativo_confirmado": false
+    },
+    {
+      "nome": "Centro",
+      "aliases": [
+        "centro"
+      ],
+      "fonte_id": "candeia_cnefe_2022",
+      "tipo": "localidade_de_endereco_CNEFE",
+      "bairro_administrativo_confirmado": false
+    },
+    {
+      "nome": "Estrada de Santa Cruz Tiradentes",
+      "aliases": [
+        "estrada de santa cruz tiradentes"
+      ],
+      "fonte_id": "candeia_cnefe_2022",
+      "tipo": "localidade_de_endereco_CNEFE",
+      "bairro_administrativo_confirmado": false
+    },
+    {
+      "nome": "Jardim das Rosas",
+      "aliases": [
+        "jardim das rosas"
+      ],
+      "fonte_id": "candeia_cnefe_2022",
+      "tipo": "localidade_de_endereco_CNEFE",
+      "bairro_administrativo_confirmado": false
+    },
+    {
+      "nome": "Porto Real",
+      "aliases": [
+        "porto real"
+      ],
+      "fonte_id": "candeia_cnefe_2022",
+      "tipo": "localidade_de_endereco_CNEFE",
+      "bairro_administrativo_confirmado": false
+    },
+    {
+      "nome": "Residencial Rosa Mistica",
+      "aliases": [
+        "residencial rosa mistica"
+      ],
+      "fonte_id": "candeia_cnefe_2022",
+      "tipo": "localidade_de_endereco_CNEFE",
+      "bairro_administrativo_confirmado": false
+    },
+    {
+      "nome": "Serrinha",
+      "aliases": [
+        "serrinha"
+      ],
+      "fonte_id": "candeia_cnefe_2022",
+      "tipo": "localidade_de_endereco_CNEFE",
+      "bairro_administrativo_confirmado": false
+    }
+  ],
+  "logradouros": [
+    {
+      "logradouro": "Avenida Arnobio Caldeira Franco",
+      "bairro": "Centro",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "avenida arnobio caldeira franco",
+      "localidade_fonte": "centro",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Avenida Ministro Gabriel Passos",
+      "bairro": "Centro",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "avenida ministro gabriel passos",
+      "localidade_fonte": "centro",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Avenida Ministro Gabriel Passos",
+      "bairro": "Estrada de Santa Cruz Tiradentes",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "avenida ministro gabriel passos",
+      "localidade_fonte": "estrada de santa cruz tiradentes",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Avenida Ministro Gabriel Passos",
+      "bairro": "Porto Real",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "avenida ministro gabriel passos",
+      "localidade_fonte": "porto real",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Avenida Vereador Jose Moreira de Aquino",
+      "bairro": "Porto Real",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "avenida vereador jose moreira de aquino",
+      "localidade_fonte": "porto real",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Beco Jose Amado Rocha",
+      "bairro": "Centro",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "beco jose amado rocha",
+      "localidade_fonte": "centro",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Estrada Real",
+      "bairro": "Serrinha",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "estrada real",
+      "localidade_fonte": "serrinha",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Praca Antonio Ribeiro de Almeida",
+      "bairro": "Bela Vista",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "praca antonio ribeiro de almeida",
+      "localidade_fonte": "bela vista",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Praca da Liberdade",
+      "bairro": "Centro",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "praca da liberdade",
+      "localidade_fonte": "centro",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Praca Santa Cruz",
+      "bairro": "Centro",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "praca santa cruz",
+      "localidade_fonte": "centro",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Praca Sao Pedro",
+      "bairro": "Bela Vista",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "praca sao pedro",
+      "localidade_fonte": "bela vista",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Praca Sao Pedro",
+      "bairro": "Centro",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "praca sao pedro",
+      "localidade_fonte": "centro",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Praca Sao Sebastiao",
+      "bairro": "Bela Vista",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "praca sao sebastiao",
+      "localidade_fonte": "bela vista",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Praca Sao Sebastiao",
+      "bairro": "Centro",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "praca sao sebastiao",
+      "localidade_fonte": "centro",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Praca Tiradentes",
+      "bairro": "Centro",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "praca tiradentes",
+      "localidade_fonte": "centro",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua 11",
+      "bairro": "Residencial Rosa Mistica",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua 11",
+      "localidade_fonte": "residencial rosa mistica",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua 12",
+      "bairro": "Residencial Rosa Mistica",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua 12",
+      "localidade_fonte": "residencial rosa mistica",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua 21 de Abril",
+      "bairro": "Centro",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua 21 de abril",
+      "localidade_fonte": "centro",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua 7",
+      "bairro": "Bela Vista",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua 7",
+      "localidade_fonte": "bela vista",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua 7 de Setembro",
+      "bairro": "Centro",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua 7 de setembro",
+      "localidade_fonte": "centro",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Alberto Santos Dumont",
+      "bairro": "Bela Vista",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua alberto santos dumont",
+      "localidade_fonte": "bela vista",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Alberto Santos Dumont",
+      "bairro": "Centro",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua alberto santos dumont",
+      "localidade_fonte": "centro",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Ana Bernadina Veloso",
+      "bairro": "Centro",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua ana bernadina veloso",
+      "localidade_fonte": "centro",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Ana de Freitas da Silva",
+      "bairro": "Bela Vista",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua ana de freitas da silva",
+      "localidade_fonte": "bela vista",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Ana Maria de Jesus",
+      "bairro": "Centro",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua ana maria de jesus",
+      "localidade_fonte": "centro",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Antonia Maria de Jesus",
+      "bairro": "Centro",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua antonia maria de jesus",
+      "localidade_fonte": "centro",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Antonio Augusto da Silva",
+      "bairro": "Centro",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua antonio augusto da silva",
+      "localidade_fonte": "centro",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Antonio Bento Veloso",
+      "bairro": "Centro",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua antonio bento veloso",
+      "localidade_fonte": "centro",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Antonio Chaves de Miranda",
+      "bairro": "Centro",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua antonio chaves de miranda",
+      "localidade_fonte": "centro",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Ari Jose de Souza",
+      "bairro": "Bela Vista",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua ari jose de souza",
+      "localidade_fonte": "bela vista",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Ari Jose de Souza",
+      "bairro": "Centro",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua ari jose de souza",
+      "localidade_fonte": "centro",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Arnobio Caldeira Franco",
+      "bairro": "Centro",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua arnobio caldeira franco",
+      "localidade_fonte": "centro",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Artur Napoleao",
+      "bairro": "Bela Vista",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua artur napoleao",
+      "localidade_fonte": "bela vista",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Artur Napoleao",
+      "bairro": "Centro",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua artur napoleao",
+      "localidade_fonte": "centro",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Avelino Chaves de Miranda",
+      "bairro": "Bela Vista",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua avelino chaves de miranda",
+      "localidade_fonte": "bela vista",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Barbacena",
+      "bairro": "Centro",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua barbacena",
+      "localidade_fonte": "centro",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Barbacena",
+      "bairro": "Porto Real",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua barbacena",
+      "localidade_fonte": "porto real",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Barroso",
+      "bairro": "Porto Real",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua barroso",
+      "localidade_fonte": "porto real",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Brasilia",
+      "bairro": "Bela Vista",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua brasilia",
+      "localidade_fonte": "bela vista",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Conego Osvaldo Lustosa",
+      "bairro": "Bela Vista",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua conego osvaldo lustosa",
+      "localidade_fonte": "bela vista",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Conego Osvaldo Lustosa",
+      "bairro": "Centro",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua conego osvaldo lustosa",
+      "localidade_fonte": "centro",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Coronel Celestino Rodrigues de Melo",
+      "bairro": "Bela Vista",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua coronel celestino rodrigues de melo",
+      "localidade_fonte": "bela vista",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua das Flores",
+      "bairro": "Centro",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua das flores",
+      "localidade_fonte": "centro",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua das Flores",
+      "bairro": "Jardim das Rosas",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua das flores",
+      "localidade_fonte": "jardim das rosas",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Dona Marieta Brasilina",
+      "bairro": "Centro",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua dona marieta brasilina",
+      "localidade_fonte": "centro",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Doutor Edmundo Loures",
+      "bairro": "Bela Vista",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua doutor edmundo loures",
+      "localidade_fonte": "bela vista",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Doutor Edmundo Loures",
+      "bairro": "Centro",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua doutor edmundo loures",
+      "localidade_fonte": "centro",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Doutor Edmundo Loures",
+      "bairro": "Jardim das Rosas",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua doutor edmundo loures",
+      "localidade_fonte": "jardim das rosas",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Doutor Mateus Salome de Oliveira",
+      "bairro": "Bela Vista",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua doutor mateus salome de oliveira",
+      "localidade_fonte": "bela vista",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Elpidio Augusto Chaves",
+      "bairro": "Centro",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua elpidio augusto chaves",
+      "localidade_fonte": "centro",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Enedina Maria da Conceicao",
+      "bairro": "Bela Vista",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua enedina maria da conceicao",
+      "localidade_fonte": "bela vista",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Enedina Maria da Conceicao",
+      "bairro": "Centro",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua enedina maria da conceicao",
+      "localidade_fonte": "centro",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Euripedes Inacio de Jesus",
+      "bairro": "Bela Vista",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua euripedes inacio de jesus",
+      "localidade_fonte": "bela vista",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Expedicionario Alipio Pires",
+      "bairro": "Centro",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua expedicionario alipio pires",
+      "localidade_fonte": "centro",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Expedicionario Sebastiao Luciano das Chagas",
+      "bairro": "Centro",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua expedicionario sebastiao luciano das chagas",
+      "localidade_fonte": "centro",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Francisco Goncalves",
+      "bairro": "Centro",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua francisco goncalves",
+      "localidade_fonte": "centro",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Geraldo Damasio Parreira",
+      "bairro": "Bela Vista",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua geraldo damasio parreira",
+      "localidade_fonte": "bela vista",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Geraldo Severino da Silva",
+      "bairro": "Residencial Rosa Mistica",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua geraldo severino da silva",
+      "localidade_fonte": "residencial rosa mistica",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Getulio Vargas",
+      "bairro": "Alto da Serra",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua getulio vargas",
+      "localidade_fonte": "alto da serra",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Getulio Vargas",
+      "bairro": "Bela Vista",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua getulio vargas",
+      "localidade_fonte": "bela vista",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Getulio Vargas",
+      "bairro": "Centro",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua getulio vargas",
+      "localidade_fonte": "centro",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Getulio Vargas",
+      "bairro": "Jardim das Rosas",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua getulio vargas",
+      "localidade_fonte": "jardim das rosas",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Helena Maria da Costa",
+      "bairro": "Bela Vista",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua helena maria da costa",
+      "localidade_fonte": "bela vista",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Herculano Veloso",
+      "bairro": "Bela Vista",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua herculano veloso",
+      "localidade_fonte": "bela vista",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Herculano Veloso",
+      "bairro": "Centro",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua herculano veloso",
+      "localidade_fonte": "centro",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Ida Gali",
+      "bairro": "Centro",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua ida gali",
+      "localidade_fonte": "centro",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Inacio Miguel da Costa",
+      "bairro": "Centro",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua inacio miguel da costa",
+      "localidade_fonte": "centro",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Jair Vicente da Costa",
+      "bairro": "Residencial Rosa Mistica",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua jair vicente da costa",
+      "localidade_fonte": "residencial rosa mistica",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Joao Batista da Silva",
+      "bairro": "Centro",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua joao batista da silva",
+      "localidade_fonte": "centro",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Joao Batista dos Santos",
+      "bairro": "Centro",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua joao batista dos santos",
+      "localidade_fonte": "centro",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Joao Batista Gomes",
+      "bairro": "Centro",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua joao batista gomes",
+      "localidade_fonte": "centro",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Joaquim Ferreira dos Santos",
+      "bairro": "Centro",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua joaquim ferreira dos santos",
+      "localidade_fonte": "centro",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Joaquim Rodrigues dos Santos",
+      "bairro": "Centro",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua joaquim rodrigues dos santos",
+      "localidade_fonte": "centro",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Jose Augusto Barbosa",
+      "bairro": "Centro",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua jose augusto barbosa",
+      "localidade_fonte": "centro",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Jose Luiz de Freitas",
+      "bairro": "Centro",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua jose luiz de freitas",
+      "localidade_fonte": "centro",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Jose Moreira do Nascimento",
+      "bairro": "Centro",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua jose moreira do nascimento",
+      "localidade_fonte": "centro",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Jose Morrone",
+      "bairro": "Bela Vista",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua jose morrone",
+      "localidade_fonte": "bela vista",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Jose Morrone",
+      "bairro": "Centro",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua jose morrone",
+      "localidade_fonte": "centro",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Jose Vicente Paiva",
+      "bairro": "Bela Vista",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua jose vicente paiva",
+      "localidade_fonte": "bela vista",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Juvenal Chaves",
+      "bairro": "Centro",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua juvenal chaves",
+      "localidade_fonte": "centro",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Lagoa Dourada",
+      "bairro": "Porto Real",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua lagoa dourada",
+      "localidade_fonte": "porto real",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Lagoa Dourada",
+      "bairro": "Residencial Rosa Mistica",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua lagoa dourada",
+      "localidade_fonte": "residencial rosa mistica",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Marcal Rotier",
+      "bairro": "Centro",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua marcal rotier",
+      "localidade_fonte": "centro",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Maria Auxiliadora Alcate",
+      "bairro": "Bela Vista",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua maria auxiliadora alcate",
+      "localidade_fonte": "bela vista",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Maria das Merces Silva",
+      "bairro": "Centro",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua maria das merces silva",
+      "localidade_fonte": "centro",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Maria Jose Chagas Goncalves",
+      "bairro": "Centro",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua maria jose chagas goncalves",
+      "localidade_fonte": "centro",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Neftali Alves de Morais",
+      "bairro": "Bela Vista",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua neftali alves de morais",
+      "localidade_fonte": "bela vista",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Ninpha Maria Oliveira",
+      "bairro": "Centro",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua ninpha maria oliveira",
+      "localidade_fonte": "centro",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Olinda Silva Caputo",
+      "bairro": "Centro",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua olinda silva caputo",
+      "localidade_fonte": "centro",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Olivia Calcavara dos Santos",
+      "bairro": "Centro",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua olivia calcavara dos santos",
+      "localidade_fonte": "centro",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Oswaldo Cecilio de Paula",
+      "bairro": "Residencial Rosa Mistica",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua oswaldo cecilio de paula",
+      "localidade_fonte": "residencial rosa mistica",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Ouro Preto",
+      "bairro": "Bela Vista",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua ouro preto",
+      "localidade_fonte": "bela vista",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Ouro Preto",
+      "bairro": "Centro",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua ouro preto",
+      "localidade_fonte": "centro",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Pedro Severiano Martins",
+      "bairro": "Centro",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua pedro severiano martins",
+      "localidade_fonte": "centro",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Porto Real",
+      "bairro": "Centro",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua porto real",
+      "localidade_fonte": "centro",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Porto Real",
+      "bairro": "Porto Real",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua porto real",
+      "localidade_fonte": "porto real",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Prados",
+      "bairro": "Porto Real",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua prados",
+      "localidade_fonte": "porto real",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Prados",
+      "bairro": "Residencial Rosa Mistica",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua prados",
+      "localidade_fonte": "residencial rosa mistica",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Primeiro de Janeiro",
+      "bairro": "Centro",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua primeiro de janeiro",
+      "localidade_fonte": "centro",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Rafael Rodrigues de Carvalho",
+      "bairro": "Centro",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua rafael rodrigues de carvalho",
+      "localidade_fonte": "centro",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Resende Costa",
+      "bairro": "Porto Real",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua resende costa",
+      "localidade_fonte": "porto real",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Rui Ferreira Vale",
+      "bairro": "Residencial Rosa Mistica",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua rui ferreira vale",
+      "localidade_fonte": "residencial rosa mistica",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Santa Cruz",
+      "bairro": "Bela Vista",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua santa cruz",
+      "localidade_fonte": "bela vista",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Santa Rita",
+      "bairro": "Porto Real",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua santa rita",
+      "localidade_fonte": "porto real",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Sao Paulo",
+      "bairro": "Bela Vista",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua sao paulo",
+      "localidade_fonte": "bela vista",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Sao Paulo",
+      "bairro": "Centro",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua sao paulo",
+      "localidade_fonte": "centro",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Sao Vicente de Paulo",
+      "bairro": "Centro",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua sao vicente de paulo",
+      "localidade_fonte": "centro",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Sebastiao Ildefonso",
+      "bairro": "Centro",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua sebastiao ildefonso",
+      "localidade_fonte": "centro",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Silverio Januario das Neves",
+      "bairro": "Residencial Rosa Mistica",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua silverio januario das neves",
+      "localidade_fonte": "residencial rosa mistica",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Tiradentes",
+      "bairro": "Bela Vista",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua tiradentes",
+      "localidade_fonte": "bela vista",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Verao",
+      "bairro": "Centro",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua verao",
+      "localidade_fonte": "centro",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Vereador Divino Brasilino da Cunha",
+      "bairro": "Centro",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua vereador divino brasilino da cunha",
+      "localidade_fonte": "centro",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Vereador Jose do Nascimento",
+      "bairro": "Centro",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua vereador jose do nascimento",
+      "localidade_fonte": "centro",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Rua Vicente Margotte",
+      "bairro": "Bela Vista",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "rua vicente margotte",
+      "localidade_fonte": "bela vista",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Travessa Arnobio Caldeira Franco",
+      "bairro": "Centro",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "travessa arnobio caldeira franco",
+      "localidade_fonte": "centro",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Travessa Doutor Mateus Salome de Oliveira",
+      "bairro": "Bela Vista",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "travessa doutor mateus salome de oliveira",
+      "localidade_fonte": "bela vista",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Travessa Getulio Vargas",
+      "bairro": "Bela Vista",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "travessa getulio vargas",
+      "localidade_fonte": "bela vista",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Travessa Getulio Vargas",
+      "bairro": "Centro",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "travessa getulio vargas",
+      "localidade_fonte": "centro",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Travessa Joao Batista da Silva",
+      "bairro": "Centro",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "travessa joao batista da silva",
+      "localidade_fonte": "centro",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Travessa Joaquim Rodrigues dos Santos",
+      "bairro": "Centro",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "travessa joaquim rodrigues dos santos",
+      "localidade_fonte": "centro",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Travessa Juvenal Chaves",
+      "bairro": "Centro",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "travessa juvenal chaves",
+      "localidade_fonte": "centro",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Travessa Maria Jose Chagas Goncalves",
+      "bairro": "Centro",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "travessa maria jose chagas goncalves",
+      "localidade_fonte": "centro",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Travessa Resende Costa",
+      "bairro": "Porto Real",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "travessa resende costa",
+      "localidade_fonte": "porto real",
+      "ano_referencia": 2022
+    },
+    {
+      "logradouro": "Travessa Sao Paulo",
+      "bairro": "Bela Vista",
+      "cep": "36328000",
+      "fonte_id": "candeia_cnefe_2022",
+      "logradouro_fonte": "travessa sao paulo",
+      "localidade_fonte": "bela vista",
+      "ano_referencia": 2022
+    }
+  ],
+  "geometrias_internas": {
+    "estado": "pendente",
+    "bairros": false,
+    "territorios": false
+  },
+  "fontes_pendentes": [
+    {
+      "id": "ibge_cnefe_2022",
+      "fonte": "IBGE CNEFE Censo 2022",
+      "host": "ftp.ibge.gov.br",
+      "url": "https://ftp.ibge.gov.br/Cadastro_Nacional_de_Enderecos_para_Fins_Estatisticos/Censo_Demografico_2022/",
+      "estado": "bloqueado_proxy_403",
+      "observacao": "Arquivo municipal ainda não localizado e obtido. Não se comprovou inexistência de dados."
+    },
+    {
+      "id": "ibge_malha_atual",
+      "fonte": "IBGE serviço de malhas",
+      "host": "servicodados.ibge.gov.br",
+      "url": "https://servicodados.ibge.gov.br/api/v3/malhas/municipios/3157336?formato=application/vnd.geo+json&qualidade=maxima",
+      "estado": "bloqueado_proxy_403",
+      "observacao": "Conferência da malha oficial atual pendente."
+    }
+  ],
+  "lacunas": [
+    "Não há delimitações verificadas de bairros ou territórios; o mapa contém apenas limite municipal.",
+    "Data de referência e atualização da malha secundária precisam ser cotejadas com o IBGE atual.",
+    "O contorno serve à visualização municipal; não fundamenta demarcação legal ou localização de famílias.",
+    "Os pares de endereço refletem o CNEFE 2022 publicado em índice secundário; grafia oficial e alterações posteriores precisam de validação municipal.",
+    "Localidades com menos de 10 coordenadas públicas distintas ou referência fora do contorno permanecem sem ponto agregado.",
+    "As referências amostrais não são limites ou centroides geométricos oficiais de bairros."
+  ],
+  "privacidade": {
+    "domicilios_individuais": false,
+    "dados_de_cidadaos": false,
+    "coordenadas_de_familias": false
+  },
+  "uso": "Sugestões editáveis de endereço CNEFE 2022 e visualização territorial agregada. Preserve a atribuição do IBGE/Candeia e a licença da malha. Não vincule endereço de família aos pontos públicos deste catálogo.",
+  "referencias_localidades": [
+    {
+      "nome": "Bela Vista",
+      "aliases": [
+        "bela vista"
+      ],
+      "codigo_ibge": "3157336",
+      "longitude": -44.221,
+      "latitude": -21.119,
+      "coordenadas_distintas": 990,
+      "metodo": "centro_amostral",
+      "fonte_id": "candeia_cnefe_2022",
+      "estado": "verificado_agregado",
+      "ano_referencia": 2022,
+      "precisao": "referencia_aproximada_de_localidade",
+      "observacao": "Média de pontos públicos distintos. Não representa residência, unidade de atendimento ou limite de bairro."
+    },
+    {
+      "nome": "Centro",
+      "aliases": [
+        "centro"
+      ],
+      "codigo_ibge": "3157336",
+      "longitude": -44.2266,
+      "latitude": -21.1197,
+      "coordenadas_distintas": 2405,
+      "metodo": "centro_amostral",
+      "fonte_id": "candeia_cnefe_2022",
+      "estado": "verificado_agregado",
+      "ano_referencia": 2022,
+      "precisao": "referencia_aproximada_de_localidade",
+      "observacao": "Média de pontos públicos distintos. Não representa residência, unidade de atendimento ou limite de bairro."
+    },
+    {
+      "nome": "Estrada de Santa Cruz Tiradentes",
+      "aliases": [
+        "estrada de santa cruz tiradentes"
+      ],
+      "codigo_ibge": "3157336",
+      "longitude": -44.2152,
+      "latitude": -21.1225,
+      "coordenadas_distintas": 20,
+      "metodo": "centro_amostral",
+      "fonte_id": "candeia_cnefe_2022",
+      "estado": "verificado_agregado",
+      "ano_referencia": 2022,
+      "precisao": "referencia_aproximada_de_localidade",
+      "observacao": "Média de pontos públicos distintos. Não representa residência, unidade de atendimento ou limite de bairro."
+    },
+    {
+      "nome": "Jardim das Rosas",
+      "aliases": [
+        "jardim das rosas"
+      ],
+      "codigo_ibge": "3157336",
+      "longitude": -44.2222,
+      "latitude": -21.1165,
+      "coordenadas_distintas": 43,
+      "metodo": "centro_amostral",
+      "fonte_id": "candeia_cnefe_2022",
+      "estado": "verificado_agregado",
+      "ano_referencia": 2022,
+      "precisao": "referencia_aproximada_de_localidade",
+      "observacao": "Média de pontos públicos distintos. Não representa residência, unidade de atendimento ou limite de bairro."
+    },
+    {
+      "nome": "Porto Real",
+      "aliases": [
+        "porto real"
+      ],
+      "codigo_ibge": "3157336",
+      "longitude": -44.2304,
+      "latitude": -21.1234,
+      "coordenadas_distintas": 491,
+      "metodo": "centro_amostral",
+      "fonte_id": "candeia_cnefe_2022",
+      "estado": "verificado_agregado",
+      "ano_referencia": 2022,
+      "precisao": "referencia_aproximada_de_localidade",
+      "observacao": "Média de pontos públicos distintos. Não representa residência, unidade de atendimento ou limite de bairro."
+    },
+    {
+      "nome": "Residencial Rosa Mistica",
+      "aliases": [
+        "residencial rosa mistica"
+      ],
+      "codigo_ibge": "3157336",
+      "longitude": -44.2267,
+      "latitude": -21.1236,
+      "coordenadas_distintas": 208,
+      "metodo": "centro_amostral",
+      "fonte_id": "candeia_cnefe_2022",
+      "estado": "verificado_agregado",
+      "ano_referencia": 2022,
+      "precisao": "referencia_aproximada_de_localidade",
+      "observacao": "Média de pontos públicos distintos. Não representa residência, unidade de atendimento ou limite de bairro."
+    }
+  ],
+  "sugestoes_endereco": {
+    "estado": "pares_verificados_em_indice_secundario",
+    "fonte_id": "candeia_cnefe_2022",
+    "total_pares": 124,
+    "total_localidades": 8,
+    "cep_municipal_observado": "36328000",
+    "coordenadas_individuais_incluidas": false,
+    "grafia": "Capitalizada a partir da grafia normalizada sem acentos do índice.",
+    "digitar_endereco_livre": true
+  },
+  "camadas_tematicas_pendentes": [
+    {
+      "id": "fbds_uso_3157336",
+      "fonte": "FBDS, arquivo de índice enviado pelo cliente",
+      "url": "https://mail.geo.fbds.org.br/MG/SANTA_CRUZ_DE_MINAS/USO/",
+      "arquivo_recebido": "MG_3157336_USO.shx",
+      "sha256": "00e2c3067cedb48871b41a30a8bb383d278b33a9c69839fc4d80774eda79e859",
+      "estado": "indice_shx_validado_componentes_pendentes",
+      "bytes": 500,
+      "tipo_shapefile": 5,
+      "entradas_indice": 50,
+      "bbox_xy": [
+        579345.4823999997,
+        7663435.185099999,
+        583202.2473999998,
+        7665062.8177000005
+      ],
+      "sistema_coordenadas": "projetado, identificação exata pendente do PRJ",
+      "licenca": "nao_confirmada",
+      "acesso_diretorio": "HTTP 403 na consulta inicial e HTTP 503 na repetição escalada",
+      "componentes_necessarios": [
+        "MG_3157336_USO.shp",
+        "MG_3157336_USO.dbf",
+        "MG_3157336_USO.prj"
+      ],
+      "uso_potencial": "Camada temática de uso/cobertura a confirmar nos atributos. Não foi utilizada para delimitar bairros ou endereços.",
+      "observacao": "50 entradas no índice não significam 50 bairros. Sem geometria e atributos não é possível interpretar as classes."
+    }
+  ]
+}

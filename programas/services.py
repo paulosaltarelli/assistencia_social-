@@ -61,16 +61,18 @@ def validar_aprovacao(objeto, situacao, quantidade, valor=None):
         raise ValidationError("Use aprovação parcial quando quantidade ou valor for inferior ao solicitado.")
 
 
+TRANSICOES_BENEFICIO = {
+    "solicitado": {"analise", "cancelado"},
+    "analise": {"aprovado", "parcial", "indeferido", "cancelado"},
+    "aprovado": {"entregue", "cancelado"}, "parcial": {"entregue", "cancelado"},
+}
+
+
 @transaction.atomic
 def decidir_beneficio(pk, municipio, autor, situacao, motivo, quantidade=Decimal("0"), valor=Decimal("0")):
     objeto = SolicitacaoBeneficio.objects.select_for_update().get(pk=pk, municipio=municipio)
     motivo_obrigatorio(motivo)
-    permitidas = {
-        "solicitado": {"analise", "cancelado"},
-        "analise": {"aprovado", "parcial", "indeferido", "cancelado"},
-        "aprovado": {"entregue", "cancelado"}, "parcial": {"entregue", "cancelado"},
-    }
-    if situacao not in permitidas.get(objeto.situacao, set()):
+    if situacao not in TRANSICOES_BENEFICIO.get(objeto.situacao, set()):
         raise ValidationError("Transição indisponível para a situação atual. Atualize a página.")
     anterior = objeto.situacao
     agora = timezone.now()

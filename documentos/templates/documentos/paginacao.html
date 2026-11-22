@@ -1,5 +1,4 @@
-{% if pagina.has_other_pages %}<nav class="table-note" aria-label="Paginação">
-{% if pagina.has_previous %}<a href="{% querystring pagina=pagina.previous_page_number %}">Anterior</a>{% endif %}
-Página {{ pagina.number }} de {{ pagina.paginator.num_pages }}
-{% if pagina.has_next %}<a href="{% querystring pagina=pagina.next_page_number %}">Próxima</a>{% endif %}
+{% if pagina.has_other_pages %}
+<nav class="doc-paginacao" aria-label="Paginação de documentos">
+ <span>Página {{ pagina.number }} de {{ pagina.paginator.num_pages }}</span><div>{% if pagina.has_previous %}<a href="{% querystring pagina=pagina.previous_page_number %}">Anterior</a>{% endif %}{% if pagina.has_next %}<a href="{% querystring pagina=pagina.next_page_number %}">Próxima</a>{% endif %}</div>
 </nav>{% endif %}

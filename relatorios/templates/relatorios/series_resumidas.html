@@ -1,2 +1,19 @@
-{% load l10n %}
-{% if series_resumidas %}<section class="bloco"><h2>Evolução dos registros</h2><div class="metric-grid">{% for serie in series_resumidas %}<section class="card"><h3>{{ serie.titulo }}</h3><p>{{ serie.descricao }}</p><div class="table-wrap"><table><caption>{{ serie.unidade|capfirst }}</caption><thead><tr><th scope="col">Período ou bairro</th><th scope="col">{{ serie.unidade|capfirst }}</th></tr></thead><tbody>{% for rotulo, valor in serie.linhas %}<tr><th scope="row">{{ rotulo }}</th><td><meter min="0" max="{{ serie.maximo|unlocalize }}" value="{{ valor|unlocalize }}" aria-label="{{ rotulo }}">{{ valor }}</meter> {{ valor }}</td></tr>{% empty %}<tr><td colspan="2">Nenhum registro no período.</td></tr>{% endfor %}</tbody></table></div></section>{% endfor %}</div></section>{% endif %}
+{% load static %}
+{% if series_resumidas %}
+<section class="social-analytics" aria-labelledby="titulo-evolucao">
+  <div class="section-head"><div><h2 id="titulo-evolucao">Panorama do município</h2><p>Evolução e distribuição dos registros autorizados para o seu perfil.</p></div>{% if 'relatorios.ver' in direitos %}<a href="{% url 'relatorios:inicio' %}">Consultar relatórios <span aria-hidden="true">→</span></a>{% endif %}</div>
+  <div class="social-charts-grid">
+    {% for serie in series_resumidas %}
+    <article class="social-chart" aria-labelledby="serie-titulo-{{ forloop.counter }}">
+      <header class="social-chart-heading"><div><h3 id="serie-titulo-{{ forloop.counter }}">{{ serie.titulo }}</h3><p class="social-chart-unit">{{ serie.unidade|capfirst }}</p></div><span class="social-chart-total" aria-label="Total da série"></span></header>
+      <div class="social-chart-plot"><canvas role="img" aria-labelledby="serie-titulo-{{ forloop.counter }}" aria-describedby="serie-descricao-{{ forloop.counter }}"><p>Os valores estão disponíveis na tabela deste gráfico.</p></canvas><p class="social-chart-empty" hidden>Nenhum registro no período consultado.</p></div>
+      <p id="serie-descricao-{{ forloop.counter }}" class="social-chart-description">{{ serie.descricao }}</p>
+      <details class="social-chart-data"><summary>Ver dados em tabela</summary><div class="table-wrap"><table><caption>{{ serie.titulo }}</caption><thead><tr><th scope="col">Período ou categoria</th><th scope="col">{{ serie.unidade|capfirst }}</th></tr></thead><tbody>{% for rotulo, valor in serie.linhas %}<tr><th scope="row">{{ rotulo }}</th><td>{{ valor }}</td></tr>{% empty %}<tr><td colspan="2">Nenhum registro no período.</td></tr>{% endfor %}</tbody></table></div></details>
+      {{ serie.linhas|json_script }}
+    </article>
+    {% endfor %}
+  </div>
+</section>
+<script src="{% static 'atendimentos/vendor/chart.umd.js' %}" defer></script>
+<script src="{% static 'atendimentos/painel-graficos.js' %}" defer></script>
+{% endif %}

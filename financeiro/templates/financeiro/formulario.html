@@ -1,8 +1,4 @@
 {% extends "financeiro/base.html" %}{% block corpo %}
-<a class="voltar" href="{{ retorno }}">Voltar</a>
-<h1>{{ titulo }}</h1>
-{% if contexto %}<p>{{ contexto }}</p>{% endif %}
-<section><form method="post">{% csrf_token %}
-{% include "financeiro/campos.html" %}
-<div class="acoes"><button type="submit">Salvar</button><a href="{{ retorno }}">Cancelar</a></div></form></section>
+<nav class="fin-crumb" aria-label="Navegação"><a href="{{ retorno }}">Voltar</a></nav><header class="fin-heading"><div><h1>{{ titulo }}</h1>{% if contexto %}<p>{{ contexto }}</p>{% endif %}</div></header>
+<section class="fin-card"><form method="post">{% csrf_token %}{% include "financeiro/campos.html" %}<div class="fin-actions"><button type="submit">Salvar</button><a href="{{ retorno }}">Cancelar</a></div></form></section>
 {% endblock %}

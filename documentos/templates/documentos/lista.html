@@ -1,13 +1,21 @@
-{% extends "app_shell.html" %}
-{% block conteudo %}
-<div class="page-header"><div><h1>{{ titulo }}</h1>{% if origem %}<p>{{ rotulo }} · {{ origem.descricao|default:origem.pk }}</p>{% endif %}</div>
-{% if origem and editar %}<a class="button" href="{% url 'documentos:anexar' alvo origem.pk %}">{% if alvo == "despesa" %}Anexar nota fiscal ou documento{% else %}Anexar documento{% endif %}</a>{% endif %}
-{% if arquivo_autorizado %}<a class="button secondary" href="{% url 'documentos:prestacao' %}">Prestação de contas</a>{% endif %}</div>
-{% if voltar %}<p><a href="{{ voltar }}">Voltar ao processo</a></p>{% else %}
-<form class="search-form" method="get"><div class="field"><label for="nome-doc">Nome do arquivo</label><input id="nome-doc" type="search" name="q" value="{{ busca }}" maxlength="100"></div><button class="secondary">Buscar</button></form>
-{% endif %}
-<section class="panel"><div class="table-wrap"><table><thead><tr><th scope="col">Arquivo</th><th scope="col">Tipo</th><th scope="col">Versão</th><th scope="col">Anexação</th></tr></thead><tbody>
-{% for v in pagina %}<tr><td><a href="{% url 'documentos:detalhe' v.documento_id %}">{{ v.nome }}</a></td><td>{{ v.documento.get_categoria_display }}</td><td>{{ v.sequencia }}</td><td>{{ v.criado_em|date:"d/m/Y H:i" }}</td></tr>
-{% empty %}<tr><td colspan="4">{% if origem %}Este processo ainda não tem documentos.{% else %}Nenhum documento encontrado.{% endif %}</td></tr>{% endfor %}
-</tbody></table></div>{% include "documentos/paginacao.html" %}</section>
+{% extends "documentos/base.html" %}
+{% block acervo %}
+{% if voltar %}<nav class="doc-retorno" aria-label="Navegação do processo"><a href="{{ voltar }}">Voltar ao processo</a></nav>{% endif %}
+<header class="doc-header">
+  <div><h1>{{ titulo }}</h1>{% if origem %}<p>{{ rotulo }} · {{ origem.descricao|default:origem }}</p>{% else %}<p>Consulte os arquivos e acompanhe a conferência de cada documento.</p>{% endif %}</div>
+  <div class="doc-acoes">{% if origem and editar %}<a class="button" href="{% url 'documentos:anexar' alvo origem.pk %}">{% if alvo == "despesa" %}Anexar nota fiscal ou documento{% else %}Anexar documento{% endif %}</a>{% endif %}
+    {% if arquivo_autorizado %}<a class="button secondary" href="{% url 'documentos:prestacao' %}">Prestação de contas</a>{% endif %}
+  </div>
+</header>
+<section class="doc-painel">
+ <div class="doc-topo"><div><h2>Arquivos</h2><span class="doc-leve">{{ pagina.paginator.count }} documento{{ pagina.paginator.count|pluralize }}{% if busca %} para “{{ busca }}”{% endif %}</span></div>
+ {% if not origem %}<form class="doc-busca" method="get"><label for="nome-doc">Nome do arquivo</label><div><input id="nome-doc" type="search" name="q" value="{{ busca }}" maxlength="100"><button class="secondary">Buscar</button>{% if busca %}<a href="{% url 'documentos:inicio' %}">Limpar</a>{% endif %}</div></form>{% endif %}</div>
+ {% if pagina %}<div class="doc-linhas doc-listagem" role="list" aria-label="Arquivos autorizados">{% for v in pagina %}
+ <article class="doc-linha" role="listitem">
+  <div class="doc-nome">{% include "documentos/formato.html" with mime=v.mime only %}<div><h3><a href="{% url 'documentos:detalhe' v.documento_id %}">{{ v.nome }}</a></h3><span>{{ v.documento.get_categoria_display }}</span></div></div>
+  <div class="doc-status">{% include "documentos/estado.html" with estado=v.estado_atual only %}</div>
+  <div class="doc-ultima"><span>Versão {{ v.sequencia }} · {{ v.tamanho|filesizeformat }}</span><time datetime="{{ v.criado_em|date:'c' }}">{{ v.criado_em|date:"d/m/Y H:i" }}</time></div>
+ </article>{% endfor %}</div>{% else %}<div class="doc-vazio"><h3>{% if busca %}Nenhum arquivo encontrado{% else %}Nenhum documento{% endif %}</h3><p>{% if busca %}Tente outra parte do nome do arquivo.{% elif origem %}Os anexos deste processo aparecerão aqui.{% else %}Os arquivos vinculados à sua área aparecerão aqui.{% endif %}</p></div>{% endif %}
+ {% include "documentos/paginacao.html" %}
+</section>
 {% endblock %}

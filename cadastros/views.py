@@ -75,6 +75,9 @@ def integracoes(request, pessoa=None, familia=None):
             model = apps.get_model('programas', modelo)
             consulta = model.objects.filter(municipio=request.municipio)
             consulta = consulta.filter(Q(cidadao=pessoa) | Q(familia=pessoa.familia)) if pessoa else consulta.filter(familia=familia)
+            relacao = {'SolicitacaoBeneficio': 'tipo', 'PedidoMaterial': 'material'}.get(modelo)
+            if relacao:
+                consulta = consulta.select_related(relacao)
             pagina = paginar(request, consulta.order_by(*model._meta.ordering), modelo.lower())
             links = {}
             for nome, numero in [('anterior', pagina.previous_page_number() if pagina.has_previous() else None), ('proxima', pagina.next_page_number() if pagina.has_next() else None)]:
@@ -187,7 +190,7 @@ def familia_form(request, pk=None):
     complemento = ComplementoFamilia.objects.filter(familia=familia, municipio=request.municipio).first() if familia else None
     responsavel_id = uuid_seguro(request.GET.get('responsavel')) or (complemento.responsavel_id if complemento else None)
     responsavel_atual = Cidadao.objects.filter(pk=responsavel_id, familia=familia, municipio=request.municipio).first() if responsavel_id and familia else None
-    form = FamiliaForm(request.POST if request.method == 'POST' else None, instance=complemento, initial={'referencia': familia.referencia, 'responsavel_id': responsavel_atual.pk if responsavel_atual else None} if familia else None)
+    form = FamiliaForm(request.POST if request.method == 'POST' else None, municipio=request.municipio, instance=complemento, initial={'referencia': familia.referencia, 'responsavel_id': responsavel_atual.pk if responsavel_atual else None} if familia else None)
     if request.method == 'POST' and form.is_valid():
         responsavel_id = form.cleaned_data['responsavel_id']
         responsavel = Cidadao.objects.filter(pk=responsavel_id, familia=familia, municipio=request.municipio).first() if responsavel_id and familia else None

@@ -1,0 +1,224 @@
+.terr-card {
+  margin-block:1.4rem;
+}
+.terr-card .terr-controls {
+  display:flex;
+  gap:.75rem;
+  flex-wrap:wrap;
+  margin:1rem 0;
+}
+.terr-card .terr-toggle {
+  display:flex;
+  align-items:center;
+  gap:1rem;
+  background:#f3f7fa;
+  color:#355268;
+  border:1px solid #cbd8e2;
+  border-radius:10px;
+  padding:.85rem 1rem;
+  text-align:left;
+  font:inherit;
+  cursor:pointer;
+}
+.terr-card .terr-toggle strong {
+  font-size:1.45rem;
+  color:#174e70;
+}
+.terr-card .terr-toggle[aria-pressed=true] {
+  background:#e5f2ef;
+  border-color:#268b75;
+  box-shadow:inset 0 0 0 1px #268b75;
+}
+.terr-card .terr-toggle:focus-visible {
+  outline:3px solid #2d67b7;
+  outline-offset:3px;
+}
+.terr-card .terr-layout {
+  display:grid;
+  grid-template-columns:minmax(0,1.6fr) minmax(200px,1fr);
+  gap:1.5rem;
+}
+.terr-card .terr-map {
+  position:relative;
+  margin:0;
+  background:linear-gradient(140deg,#f2f7f5,#e9f1f3);
+  border:1px solid #dbe7e6;
+  border-radius:12px;
+  overflow:hidden;
+}
+.terr-card canvas {
+  display:block;
+  width:100%;
+  height:340px;
+}
+.terr-card figcaption {
+  display:grid;
+  gap:.2rem;
+  padding:1rem 1.3rem;
+  background:#fff;
+  border-top:1px solid #dbe7e6;
+}
+.terr-card figcaption strong {
+  font-size:1rem;
+}
+.terr-card figcaption small {
+  color:#627784;
+  font-size:.78rem;
+}
+.terr-card .terr-norte {
+  position:absolute;
+  right:1.2rem;
+  top:1rem;
+  font-size:.8rem;
+  font-weight:700;
+  color:#426676;
+}
+.terr-card .terr-explanation {
+  align-self:center;
+}
+.terr-card .terr-explanation h3 {
+  margin-top:0;
+}
+.terr-card .terr-explanation p,.terr-card .terr-definition p {
+  font-size:.9rem;
+  line-height:1.6;
+  color:#526879;
+}
+.terr-card .terr-source {
+  font-size:.78rem!important;
+  overflow-wrap:anywhere;
+}
+.terr-card .terr-empty {
+  padding:1.2rem;
+  background:#f2f6fa;
+  border-radius:10px;
+}
+.terr-card .terr-empty p {
+  margin-bottom:0;
+}
+.terr-card .terr-definition {
+  margin-block:1rem;
+  padding:.85rem 0;
+  border-block:1px solid #e2e9ef;
+}
+.terr-card .terr-definition summary {
+  font-weight:600;
+  cursor:pointer;
+  color:#345a74;
+}
+.terr-card .terr-definition li {
+  font-size:.88rem;
+  line-height:1.8;
+  color:#526879;
+}
+.terr-card .terr-table-wrap {
+  overflow-x:auto;
+}
+.terr-card .terr-table {
+  width:100%;
+  border-collapse:collapse;
+  font-size:.9rem;
+}
+.terr-card .terr-table caption {
+  text-align:left;
+  color:#536b7d;
+  padding:.6rem 0 1rem;
+}
+.terr-card .terr-table th,.terr-card .terr-table td {
+  text-align:left;
+  padding:.8rem 1rem;
+  border-bottom:1px solid #e4ebf0;
+  white-space:normal;
+}
+.terr-card .terr-table thead th {
+  background:#f5f8fb;
+  color:#4d6376;
+  font-size:.78rem;
+}
+.terr-card .terr-table tbody th {
+  font-weight:600;
+  color:#27465e;
+}
+@media(max-width:760px) {
+  .terr-card .terr-layout {
+    grid-template-columns:1fr;
+  }
+  .terr-card canvas {
+    height:280px;
+  }
+  .terr-card .terr-controls {
+    display:grid;
+    grid-template-columns:1fr 1fr;
+  }
+  .terr-card .terr-toggle {
+    flex-direction:column;
+    align-items:flex-start;
+    gap:.4rem;
+    font-size:.85rem;
+  }
+  .terr-card .terr-table {
+    min-width:530px;
+  }
+  .terr-card .terr-explanation {
+    padding:.5rem 0;
+  }
+}
+.terr-card .terr-coverage {
+  color: #526879;
+  font-size: .8rem;
+  line-height: 1.5;
+}
+.terr-card .terr-localities {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: .4rem;
+  max-height: 250px;
+  overflow-y: auto;
+}
+.terr-card .terr-locality {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .6rem;
+  padding: .6rem .7rem;
+  border: 1px solid #d1dfe7;
+  border-radius: 7px;
+  background: #fff;
+  color: #23475f;
+  font: inherit;
+  font-size: .78rem;
+  cursor: pointer;
+  text-align: left;
+}
+.terr-card .terr-locality[aria-pressed=true] {
+  border-color: #1e6fac;
+  background: #edf5fc;
+}
+.terr-card .terr-locality:focus-visible {
+  outline: 3px solid #2d67b7;
+  outline-offset: 2px;
+}
+.terr-card .terr-selection {
+  padding: .7rem;
+  border-left: 3px solid #729bad;
+  background: #f1f6f9;
+}
+.terr-card .terr-scale {
+  display: flex;
+  align-items: flex-end;
+  gap: 1rem;
+  min-height: 42px;
+  padding: .4rem 0;
+}
+.terr-card .terr-scale span {
+  display: flex;
+  align-items: center;
+  gap: .3rem;
+  color: #526879;
+  font-size: .75rem;
+}
+.terr-card .terr-scale i {
+  display: inline-block;
+  border-radius: 50%;
+  border: 1px solid #356f92;
+}

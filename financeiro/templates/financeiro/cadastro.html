@@ -1,8 +1,8 @@
 {% extends "financeiro/base.html" %}{% load financas %}{% block corpo %}
-<a class="voltar" href="{% url 'financeiro:inicio' %}">Financeiro</a><h1>{{ titulo }}</h1>
-{% if edita %}<section><details {% if form.errors %}open{% endif %}><summary>Novo registro</summary><form method="post">{% csrf_token %}{% include "financeiro/campos.html" %}<div class="acoes"><button>Salvar registro</button></div></form></details></section>{% endif %}
-<section><h2>Registros ({{ pagina.paginator.count }})</h2>
-{% if pagina %}<div class="tabela"><table>
+<nav class="fin-crumb" aria-label="Navegação"><a href="{% url 'financeiro:inicio' %}">Financeiro</a></nav><header class="fin-heading"><h1>{{ titulo }}</h1></header>
+{% if edita %}<section class="fin-card"><details {% if form.errors %}open{% endif %}><summary>Novo registro</summary><form method="post">{% csrf_token %}{% include "financeiro/campos.html" %}<div class="acoes"><button>Salvar registro</button></div></form></details></section>{% endif %}
+<section class="fin-card"><div class="fin-section-head"><h2>Registros</h2><span>{{ pagina.paginator.count }} no município</span></div>
+{% if pagina %}<div class="tabela" tabindex="0" role="region" aria-label="Registros financeiros"><table>
 {% if tipo == 'exercicios' %}<thead><tr><th>Exercício</th><th>Responsável</th></tr></thead><tbody>{% for r in pagina %}<tr><td>{{ r.ano }}</td><td>{{ r.responsavel.get_username }}</td></tr>{% endfor %}
 {% elif tipo == 'dotacoes' %}<thead><tr><th>Exercício / código</th><th>Classificação</th><th>Orçamento inicial</th><th>Caixa de abertura</th></tr></thead><tbody>{% for r in pagina %}<tr><td>{{ r.exercicio }} · {{ r.codigo }}</td><td>{{ r.fundo.nome }} / {{ r.fonte.nome }} / {{ r.programa.nome }} / {{ r.natureza.nome }}</td><td>{{ r.valor_inicial|reais }}</td><td>{{ r.saldo_inicial|reais }}</td></tr>{% endfor %}
 {% elif tipo == 'revisoes' or tipo == 'receitas' %}<thead><tr><th>Data</th><th>Operação</th><th>Dotação</th><th>Documento</th><th>Valor</th></tr></thead><tbody>{% for r in pagina %}<tr><td>{{ r.data|date:"d/m/Y" }}</td><td>{{ r.get_tipo_display }}</td><td>{{ r.dotacao }}</td><td>{% if tipo == 'receitas' %}<a href="{% url 'financeiro:receita' r.pk %}">{{ r.documento }}</a>{% else %}{{ r.documento }}{% endif %}</td><td>{{ r.valor|reais }}</td></tr>{% endfor %}

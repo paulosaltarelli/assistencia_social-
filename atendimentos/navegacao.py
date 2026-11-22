@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.urls import reverse
+from django.db.models import BooleanField, Case, When, Value
 from contas.models import Secretaria
 from contas.permissoes import permissoes_efetivas
 
@@ -53,6 +54,12 @@ def contexto(request):
             grupos.append((nome, links))
     if candidatas:
         max(candidatas, key=lambda link: len(link["url"]))["ativo"] = True
-    orgao = Secretaria.objects.filter(municipio_id=vinculo.municipio_id).values_list("nome", flat=True).first()
-    dados.update(menu_municipal=grupos, direitos=permissoes, orgao_municipal=orgao)
+    secretaria = Secretaria.objects.filter(municipio_id=vinculo.municipio_id).annotate(
+        tem_brasao=Case(When(brasao__isnull=True, then=Value(False)), When(brasao=b"", then=Value(False)), default=Value(True), output_field=BooleanField())
+    ).values("nome", "tem_brasao").first()
+    dados.update(
+        menu_municipal=grupos, direitos=permissoes,
+        orgao_municipal=secretaria["nome"] if secretaria else None,
+        brasao_municipal_url=reverse("contas:brasao") if secretaria and secretaria["tem_brasao"] else None,
+    )
     return dados

@@ -1,10 +1,35 @@
 {% extends "app_shell.html" %}
+{% load static %}
+{% block estilos %}<link rel="stylesheet" href="{% static 'programas/ficha.css' %}">{% endblock %}
 {% block conteudo %}
-<h1>{{ objeto.tipo.nome }}</h1><p><a href="{% url 'programas:beneficios' %}">Voltar aos benefícios</a> · <a href="{% url 'documentos:vinculo' 'beneficio' objeto.pk %}">Documentos da solicitação</a></p>
-<section class="panel"><dl><dt>Protocolo da origem</dt><dd><code>{{ objeto.pk }}</code></dd><dt>Família / cidadão</dt><dd>{{ objeto.familia }} · {{ objeto.cidadao.nome|default:'Solicitação familiar' }}</dd><dt>Situação</dt><dd>{{ objeto.get_situacao_display }}</dd><dt>Solicitado</dt><dd>{{ objeto.quantidade_solicitada }} unidade(s) · R$ {{ objeto.valor_solicitado }}</dd><dt>Aprovado</dt><dd>{{ objeto.quantidade_aprovada }} unidade(s) · R$ {{ objeto.valor_aprovado }}</dd><dt>Datas</dt><dd>Solicitação {{ objeto.solicitado_em|date:'d/m/Y' }} · Concessão {{ objeto.concedido_em|date:'d/m/Y H:i'|default:'—' }} · Entrega {{ objeto.entregue_em|date:'d/m/Y H:i'|default:'—' }}</dd><dt>Responsável</dt><dd>{{ objeto.responsavel.get_full_name|default:objeto.responsavel.username }}</dd><dt>Observações</dt><dd>{{ objeto.observacoes|linebreaksbr|default:'—' }}</dd></dl>
-{% if permite_tecnica %}<h2>Justificativa técnica protegida</h2><p>{{ objeto.justificativa_tecnica|linebreaksbr|default:'Não informada.' }}</p>{% endif %}
-<h2>Regra registrada na solicitação</h2><p>{{ objeto.regra_aplicada.nome }} · {{ objeto.regra_aplicada.vigencia_inicio }} a {{ objeto.regra_aplicada.vigencia_fim|default:'prazo indeterminado' }}</p><p>{{ objeto.regra_aplicada.regra_local|linebreaksbr }}</p></section>
-{% if pode_editar %}<section class="panel"><h2>Análise, decisão e entrega</h2><p>Fundamente a operação. Na entrega, informe o comprovante. Aprovações parciais devem refletir quantidade ou valor inferior ao solicitado.</p><form method="post">{% csrf_token %}{{ form.as_p }}<button>Registrar operação</button></form></section>{% endif %}
-{% if pode_vincular_financeiro %}<p><a class="button secondary" href="{% url 'financeiro:nova_despesa' %}?origem_tipo=beneficio&amp;origem_id={{ objeto.pk }}">Criar despesa vinculada a esta origem</a></p>{% endif %}
-{% include 'programas/historico.html' %}
+<nav aria-label="Navegação da solicitação"><a href="{% url 'programas:beneficios' %}">← Benefícios</a></nav>
+<header class="beneficio-cab">
+  <div><h1>{{ objeto.tipo.nome }}</h1><p>{{ objeto.familia }}{% if objeto.cidadao %} · {{ objeto.cidadao.nome }}{% endif %}</p></div>
+  <strong class="beneficio-estado">{{ objeto.get_situacao_display }}</strong>
+</header>
+<dl class="beneficio-resumo">
+  <div><dt>Valor solicitado</dt><dd>R$ {{ objeto.valor_solicitado|floatformat:"2g" }}</dd></div>
+  <div><dt>Quantidade solicitada</dt><dd>{{ objeto.quantidade_solicitada|floatformat:"-2" }} un.</dd></div>
+  <div><dt>Solicitado em</dt><dd>{{ objeto.solicitado_em|date:'d/m/Y' }}</dd></div>
+</dl>
+<div class="beneficio-corpo">
+  <div>
+    {% if pode_editar %}<section class="panel"><h2>Análise, decisão e entrega</h2><form method="post">{% csrf_token %}{{ form.as_p }}<button type="submit">Registrar operação</button></form></section>{% endif %}
+    {% include 'programas/historico.html' %}
+  </div>
+  <aside aria-label="Informações da solicitação">
+    <section class="panel"><h2>Acompanhamento</h2><dl class="beneficio-fatos">
+      <div><dt>Responsável</dt><dd>{{ objeto.responsavel.get_full_name|default:objeto.responsavel.username }}</dd></div>
+      <div><dt>Aprovado</dt><dd>{{ objeto.quantidade_aprovada|floatformat:"-2" }} un. · R$ {{ objeto.valor_aprovado|floatformat:"2g" }}</dd></div>
+      <div><dt>Concessão</dt><dd>{{ objeto.concedido_em|date:'d/m/Y H:i'|default:'Sem registro' }}</dd></div>
+      <div><dt>Entrega</dt><dd>{{ objeto.entregue_em|date:'d/m/Y H:i'|default:'Sem registro' }}</dd></div>
+    </dl>{% if 'documentos.ver' in direitos %}<a href="{% url 'documentos:vinculo' 'beneficio' objeto.pk %}">Documentos da solicitação</a>{% endif %}
+    {% if pode_vincular_financeiro %}<p><a href="{% url 'financeiro:nova_despesa' %}?origem_tipo=beneficio&amp;origem_id={{ objeto.pk }}">Criar despesa vinculada</a></p>{% endif %}</section>
+    <section class="panel"><h2>Detalhes do registro</h2>
+    {% if objeto.observacoes %}<p>{{ objeto.observacoes|linebreaksbr }}</p>{% endif %}
+    {% if permite_tecnica %}<details><summary>Justificativa técnica protegida</summary><p>{{ objeto.justificativa_tecnica|linebreaksbr|default:'Não informada.' }}</p></details>{% endif %}
+    <details><summary>Regra registrada na solicitação</summary><p>{{ objeto.regra_aplicada.nome }} · {{ objeto.regra_aplicada.vigencia_inicio }} a {{ objeto.regra_aplicada.vigencia_fim|default:'prazo indeterminado' }}</p><p>{{ objeto.regra_aplicada.regra_local|linebreaksbr }}</p></details>
+    <details><summary>Protocolo da origem</summary><code>{{ objeto.pk }}</code></details></section>
+  </aside>
+</div>
 {% endblock %}

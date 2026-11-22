@@ -17,6 +17,7 @@ from django.core.exceptions import ValidationError
 from django.utils import timezone
 
 from atendimentos.models import Atendimento, Cidadao, Familia
+from cadastros.localidades import CIDADE, distribuir_enderecos, pares_e_bairros
 from cadastros.models import AcompanhamentoAtendimento, ComplementoFamilia, ComplementoPessoa, NotaTecnica
 from programas.models import ConcessaoVale, Material, MovimentoEstoque, PedidoMaterial, SolicitacaoBeneficio, TipoBeneficio
 from programas.services import alterar_vale, decidir_beneficio, decidir_pedido, historico, movimentar_estoque, solicitar_beneficio
@@ -110,6 +111,7 @@ def configurar_periodo(contexto, explicita=False):
 
 def popular_cadastros(contexto):
     referencia = contexto.data_referencia
+    enderecos = distribuir_enderecos(pares_e_bairros(contexto.municipio)[0])
     for numero in range(1, 81):
         familia, nova = contexto.criar(Familia, f"familia/{numero}", referencia=f"{MARCA} Família cenário {numero:03d}")
         contexto.familias.append(familia)
@@ -124,9 +126,11 @@ def popular_cadastros(contexto):
                 nascimento=date(referencia.year - idade, 1 + (numero + posicao) % 12, 1 + numero % 27),
                 parentesco="Referência familiar" if posicao == 0 else "Integrante simulado",
                 telefone="", cpf_hash="", cpf_ultimos="", nis_hash="", nis_ultimos="")
+        par = enderecos[(numero - 1) % len(enderecos)] if enderecos else None
         contexto.criar(ComplementoFamilia, f"familia/dados/{numero}", familia=familia,
-            endereco=f"{MARCA} Rua do cenário {numero:03d}", numero=str(numero), bairro=BAIRROS[numero % len(BAIRROS)],
-            territorio=f"{MARCA} Território {1 + numero % 3}", cidade="Santa Cruz de Minas — cenário simulado",
+            endereco=par["logradouro"] if par else f"{MARCA} Rua do cenário {numero:03d}", numero=str(numero),
+            bairro=par["bairro"] if par else BAIRROS[numero % len(BAIRROS)],
+            territorio=f"{MARCA} Território {1 + numero % 3}", cidade=CIDADE if par else "Santa Cruz de Minas — cenário simulado",
             renda_mensal=Decimal(250 + (numero % 12) * 180),
             moradia=f"{MARCA} " + ["Própria", "Alugada", "Cedida", "Moradia provisória"][numero % 4],
             responsavel=integrantes[0])
@@ -266,6 +270,8 @@ def popular_vales(contexto):
 def popular(contexto, data_explicita=False):
     configurar_periodo(contexto, explicita=data_explicita)
     popular_cadastros(contexto)
+    from .enderecos import atualizar_enderecos
+    atualizar_enderecos(contexto)
     popular_atendimentos(contexto)
     popular_beneficios(contexto)
     popular_materiais(contexto)

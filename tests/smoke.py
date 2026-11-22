@@ -177,7 +177,7 @@ def main():
         novo.requisicao("/financeiro/", esperado=403)
         novo.requisicao("/contas/profissionais/novo/", esperado=403)
         _, lista = administrador.requisicao("/contas/")
-        linhas = re.findall(r"<tr>(.*?)</tr>", lista.decode(), re.S)
+        linhas = re.findall(r"<tr\b[^>]*>(.*?)</tr>", lista.decode(), re.S)
         linha = next(linha for linha in linhas if nome_novo in linha)
         profissional_id = re.search(r'/contas/profissionais/(\d+)/', linha)[1]
         administrador.requisicao(f"/contas/profissionais/{profissional_id}/acao/", {"acao": "revogar"}, esperado=302)

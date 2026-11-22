@@ -1,1 +1,15 @@
-<section class="panel"><h2>Histórico</h2><ol>{% for evento in historico %}<li><strong>{{ evento.criado_em|date:'d/m/Y H:i' }} · {{ evento.autor.get_full_name|default:evento.autor.username }}</strong><p>{{ evento.anterior|default:'Registro inicial' }} → {{ evento.situacao }} · {{ evento.motivo|linebreaksbr }}</p>{% if evento.dados %}<details><summary>Dados da operação</summary><pre>{{ evento.dados }}</pre></details>{% endif %}</li>{% empty %}<li>Nenhuma alteração registrada.</li>{% endfor %}</ol><nav aria-label="Paginação do histórico"><p>Página {{ historico.number }} de {{ historico.paginator.num_pages }} · {{ historico.paginator.count }} eventos</p>{% if historico.has_previous %}<a href="?historico={{ historico.previous_page_number }}">Anteriores</a>{% endif %} {% if historico.has_next %}<a href="?historico={{ historico.next_page_number }}">Próximos</a>{% endif %}</nav></section>
+<section class="panel historico-programa">
+  <h2>Histórico</h2>
+  <ol>{% for evento in historico %}
+    <li><time datetime="{{ evento.criado_em|date:'c' }}">{{ evento.criado_em|date:'d/m/Y H:i' }}</time>
+      <strong>{{ evento.autor.get_full_name|default:evento.autor.username }}</strong>
+      <p>{% for codigo, nome in objeto.SITUACOES %}{% if codigo == evento.anterior %}{{ nome }} → {% endif %}{% endfor %}{% for codigo, nome in objeto.SITUACOES %}{% if codigo == evento.situacao %}{{ nome }}{% endif %}{% endfor %}</p>
+      <p>{{ evento.motivo|linebreaksbr }}</p>
+      {% if evento.dados %}<details><summary>Dados da operação</summary><pre>{{ evento.dados }}</pre></details>{% endif %}
+    </li>{% empty %}<li>Nenhuma alteração registrada.</li>{% endfor %}
+  </ol>
+  {% if historico.has_other_pages %}<nav aria-label="Paginação do histórico">Página {{ historico.number }} de {{ historico.paginator.num_pages }}
+    {% if historico.has_previous %}<a href="?historico={{ historico.previous_page_number }}">Página anterior</a>{% endif %}
+    {% if historico.has_next %}<a href="?historico={{ historico.next_page_number }}">Próxima página</a>{% endif %}
+  </nav>{% endif %}
+</section>

@@ -1,6 +1,7 @@
 from django import forms
 from django.utils import timezone
 from .identificacao import documento
+from .localidades import CIDADE, fontes_dos_enderecos, pares_e_bairros
 from .models import ComplementoFamilia, ComplementoPessoa, AcompanhamentoAtendimento
 
 
@@ -47,6 +48,28 @@ class FamiliaForm(forms.ModelForm):
         model = ComplementoFamilia
         fields = ['referencia', 'responsavel_id', 'endereco', 'numero', 'complemento', 'bairro', 'territorio', 'cidade', 'renda_mensal', 'moradia']
         help_texts = {'renda_mensal': 'Deixe em branco quando não apurada. O valor zero indica renda declarada igual a zero.'}
+
+
+    def __init__(self, *args, municipio=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.pares, self.bairros = pares_e_bairros(municipio)
+        if self.bairros:
+            self.fields['bairro'].label = 'Bairro ou localidade'
+            self.fields['bairro'].widget.attrs['list'] = 'bairros-municipais'
+        if self.pares:
+            self.fontes_endereco = fontes_dos_enderecos()
+            escolhas = [(chave, f"{par['logradouro']} · {par['bairro']}") for chave, par in self.pares.items()]
+            self.fields['endereco_catalogo'] = forms.ChoiceField(label='Endereço de referência municipal', required=False,
+                choices=[('', 'Informar manualmente'), *sorted(escolhas, key=lambda item: item[1].casefold())],
+                help_text='Os pares de via e localidade usam a referência do Censo 2022. Confirme o endereço atual com a família ou preencha os campos manualmente.')
+            self.order_fields(['referencia', 'responsavel_id', 'endereco_catalogo', *self._meta.fields[2:]])
+
+    def clean(self):
+        dados = super().clean()
+        par = self.pares.get(dados.get('endereco_catalogo'))
+        if par:
+            dados.update(endereco=par['logradouro'], bairro=par['bairro'], cidade=CIDADE)
+        return dados
 
 
 class AtendimentoForm(forms.ModelForm):

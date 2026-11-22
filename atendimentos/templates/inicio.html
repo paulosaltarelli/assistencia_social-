@@ -2,6 +2,8 @@
 {% block title %}Início · Gestão Social Municipal{% endblock %}
 {% block conteudo %}
 <header class="page-header"><div><p class="eyebrow">{{ hoje|date:"l, d \d\e F \d\e Y"|capfirst }}</p><h1>Painel de trabalho</h1><p>Atendimentos, cadastros e solicitações da sua secretaria.</p></div>{% if "cadastros.ver" in direitos %}<a class="action" href="{% url 'cadastros:inicio' %}"><img class="action-icon" src="{% static 'atendimentos/icones/search.svg' %}" alt="">Localizar pessoa</a>{% endif %}</header>
+{% if series_resumidas %}{% include "relatorios/series_resumidas.html" %}{% endif %}
+{% include "relatorios/territorial.html" %}
 {% if pendencias %}<section class="card tarefas"><div class="section-head"><div><h2>Solicitações a acompanhar</h2><p>Abra uma fila para consultar os registros e dar continuidade.</p></div></div><div class="tasks">{% for nome, valor, url in pendencias %}<a href="{{ url }}"><span>{{ nome }}</span><strong>{{ valor }}</strong><img src="{% static 'atendimentos/icones/chevron-right.svg' %}" alt=""></a>{% endfor %}</div></section>{% endif %}
 {% if indicadores %}<section class="bloco"><div class="section-head"><h2>Cadastros e atividade do município</h2></div><div class="metric-grid">{% for nome, valor, url in indicadores %}<a href="{{ url }}"><span>{{ nome }}</span><strong>{{ valor }}</strong><span class="metric-link">Consultar registros <span aria-hidden="true">→</span></span></a>{% endfor %}</div></section>{% endif %}
 <section class="card"><div class="section-head"><div><h2>Ações de trabalho</h2><p>Acessos disponíveis para o seu perfil.</p></div></div><div class="quick-links">
@@ -13,5 +15,4 @@
 {% if "contas.gerir" in direitos %}<a href="{% url 'contas:inicio' %}"><img src="{% static 'atendimentos/icones/settings.svg' %}" alt=""><span>Administrar equipe</span><img class="quick-chevron" src="{% static 'atendimentos/icones/chevron-right.svg' %}" alt=""></a>{% endif %}
 <a href="{% url 'contas:senha' %}"><img src="{% static 'atendimentos/icones/settings.svg' %}" alt=""><span>Alterar minha senha</span><img class="quick-chevron" src="{% static 'atendimentos/icones/chevron-right.svg' %}" alt=""></a></div></section>
 {% if financas %}<section class="card"><div class="section-head"><div><h2>Execução financeira de {{ hoje.year }}</h2><p>Consulte a composição dos valores no módulo financeiro.</p></div><a href="{% url 'financeiro:inicio' %}">Conferir execução <span aria-hidden="true">→</span></a></div><dl class="fin-metrics"><div><dt>Saldo financeiro</dt><dd>R$ {{ financas.saldo_financeiro|floatformat:"2g" }}</dd></div><div><dt>Despesas pagas</dt><dd>R$ {{ financas.pago|floatformat:"2g" }}</dd></div></dl></section>{% endif %}
-{% if series_resumidas %}{% include "relatorios/series_resumidas.html" %}{% endif %}
 {% endblock %}

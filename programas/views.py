@@ -12,7 +12,7 @@ from .forms import (
     MovimentoForm, PedidoForm, TipoForm, ValeForm,
 )
 from .models import ConcessaoVale, Material, PedidoMaterial, SolicitacaoBeneficio, TipoBeneficio
-from .services import alterar_vale, decidir_beneficio, decidir_pedido, historico, movimentar_estoque, solicitar_beneficio
+from .services import TRANSICOES_BENEFICIO, alterar_vale, decidir_beneficio, decidir_pedido, historico, movimentar_estoque, solicitar_beneficio
 
 
 def pode_editar(request, codigo):
@@ -156,7 +156,9 @@ def vale_novo(request):
 @municipal("beneficios.ver", post="beneficios.editar")
 def beneficio_detalhe(request, pk):
     objeto = get_object_or_404(SolicitacaoBeneficio.objects.select_related("tipo", "familia", "cidadao", "responsavel"), pk=pk, municipio=request.municipio)
-    form = DecisaoForm(request.POST if request.method == "POST" else None, choices=SolicitacaoBeneficio.SITUACOES)
+    permitidas = TRANSICOES_BENEFICIO.get(objeto.situacao, set())
+    escolhas = [(codigo, nome) for codigo, nome in objeto.SITUACOES if codigo in permitidas]
+    form = DecisaoForm(request.POST if request.method == "POST" else None, choices=escolhas)
     if request.method == "POST" and form.is_valid():
         try:
             objeto = decidir_beneficio(pk, request.municipio, request.user, **form.cleaned_data)
@@ -168,7 +170,7 @@ def beneficio_detalhe(request, pk):
     registrar_evento(request, "beneficio.consulta", objeto.pk)
     return render(request, "programas/beneficio.html", {
         "objeto": objeto, "form": form, "historico": Paginator(objeto.historico.select_related("autor"), 30).get_page(request.GET.get("historico")),
-        "pode_editar": pode_editar(request, "beneficios.editar"), "permite_tecnica": pode_editar(request, "beneficios.tecnico"),
+        "pode_editar": bool(escolhas) and pode_editar(request, "beneficios.editar"), "permite_tecnica": pode_editar(request, "beneficios.tecnico"),
         "pode_vincular_financeiro": pode_vincular_financeiro(request, "beneficios.ver"),
     })
 

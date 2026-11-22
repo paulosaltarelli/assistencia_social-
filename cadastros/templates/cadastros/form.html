@@ -1,4 +1,4 @@
-{% extends 'cadastros/base.html' %}{% block cadastro_conteudo %}
+{% extends 'cadastros/base.html' %}{% load static %}{% block cadastro_conteudo %}
 {% if selecao %}<section class="cd-card"><h2>{% if selecao == 'familia' %}Selecionar família{% elif selecao == 'responsavel' %}Responsável familiar{% else %}Selecionar cidadão{% endif %}</h2>
 {% if selecionado %}<p>Seleção atual · <strong>{% if selecao == 'familia' %}{{ selecionado.referencia }}{% else %}{{ selecionado.nome }} · {{ selecionado.familia.referencia }}{% endif %}</strong></p>{% endif %}
 <p class="cd-muted">Busque e selecione antes de preencher os demais campos. Ao trocar a seleção, os campos ainda não salvos serão descartados.</p>
@@ -10,4 +10,7 @@
 {% if pessoa %}<p>CPF atual · {{ pessoa.complemento.cpf_mascarado|default:'Não informado' }} / NIS · {{ pessoa.complemento.nis_mascarado|default:'Não informado' }}</p>{% endif %}
 <form method="post" class="cd-stack">{% csrf_token %}{% if form.errors %}<div class="cd-error" role="alert"><h3>Revise os campos para salvar</h3>{{ form.non_field_errors }}{% for field in form.hidden_fields %}{% if field.errors %}<p>Faça a seleção de família ou cidadão antes de continuar.</p>{% endif %}{% endfor %}</div>{% endif %}
 {% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}<div class="cd-grid">{% for field in form.visible_fields %}<div class="cd-field"><label for="{{ field.id_for_label }}">{{ field.label }}{% if field.field.required %} (obrigatório){% endif %}</label>{{ field }}{% if field.help_text %}<span class="cd-help" id="{{ field.auto_id }}_helptext">{{ field.help_text }}</span>{% endif %}{% if field.errors %}<div id="{{ field.auto_id }}_error" class="cd-error">{{ field.errors }}</div>{% endif %}</div>{% endfor %}</div><div class="cd-actions"><button class="cd-button">Salvar registro</button><a href="{% url 'cadastros:inicio' %}">Voltar ao cadastro geral</a></div></form></section>
+{% if form.bairros %}<datalist id="bairros-municipais">{% for nome in form.bairros %}<option value="{{ nome }}"></option>{% endfor %}</datalist>{% endif %}
+{% if form.fontes_endereco %}<details class="cd-muted"><summary>Fonte dos endereços sugeridos</summary><ul>{% for origem in form.fontes_endereco %}<li>{% if origem.url %}<a href="{% firstof origem.documentacao_url origem.url %}" rel="external noreferrer">{{ origem.fonte }}</a>{% else %}{{ origem.fonte }}{% endif %}{% if origem.licenca %} · {{ origem.licenca }}{% endif %}</li>{% endfor %}</ul></details>{% endif %}
+{% if form.pares %}{{ form.pares|json_script:'pares-de-endereco' }}<script src="{% static 'cadastros/endereco.js' %}" defer></script>{% endif %}
 {% endblock %}

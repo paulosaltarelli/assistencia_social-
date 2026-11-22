@@ -1,1 +1,13 @@
-{% extends "app_shell.html" %}{% block conteudo %}<header class="page-heading"><h1>Identidade e contato da Secretaria</h1></header><section class="card"><p>Informe os dados oficiais confirmados de {{ vinculo.municipio.nome }}. O brasão é opcional.</p><form method="post" enctype="multipart/form-data">{% csrf_token %}{{ form.as_p }}<button class="button">Salvar configuração</button><a href="{% url 'contas:inicio' %}">Voltar</a></form></section>{% endblock %}
+{% extends "contas/base_contas.html" %}
+{% block title %}Dados da Secretaria · Gestão Social Municipal{% endblock %}
+{% block contas %}
+<a class="ca-back" href="{% url 'contas:inicio' %}">← Minha conta e equipe</a>
+<header class="page-header"><div><h1>Dados da Secretaria</h1><p>Identidade e canais oficiais de {{ vinculo.municipio.nome }}.</p></div></header>
+<form method="post" enctype="multipart/form-data" class="ca-form">{% csrf_token %}{{ form.non_field_errors }}
+<div class="ca-columns ca-settings">
+<div><section class="ca-card"><div class="ca-section-head"><h2>Identificação institucional</h2></div><div class="ca-field"><label for="{{ form.nome.id_for_label }}">{{ form.nome.label }}</label>{{ form.nome }}{{ form.nome.errors }}<small>Informe o nome oficial confirmado pelo município.</small></div></section><section class="ca-card"><div class="ca-section-head"><h2>Contato e atendimento</h2></div><div class="ca-form-grid">{% for field in form %}{% if field.name == "email_oficial" or field.name == "telefone" or field.name == "endereco" or field.name == "site_oficial" %}<div class="ca-field {% if field.name == 'endereco' or field.name == 'site_oficial' %}ca-span-full{% endif %}"><label for="{{ field.id_for_label }}">{{ field.label }}<span class="ca-optional">Opcional</span></label>{{ field }}{{ field.errors }}</div>{% endif %}{% endfor %}</div></section></div>
+<aside class="ca-card ca-crest-panel"><h2>Brasão municipal</h2><div class="ca-crest-preview">{% if form.instance.brasao %}<img src="{% url 'contas:brasao' %}" alt="Brasão cadastrado de {{ vinculo.municipio.nome }}">{% else %}<span>Brasão ainda não cadastrado</span>{% endif %}</div><div class="ca-field"><label for="{{ form.imagem_brasao.id_for_label }}">Enviar brasão oficial</label>{{ form.imagem_brasao }}{{ form.imagem_brasao.errors }}<small>PNG ou JPEG de até 1 MB, com no máximo 2048 pixels por lado.</small></div>{% if form.instance.brasao %}<label class="ca-inline-check">{{ form.remover_brasao }}Remover o brasão atual</label>{% endif %}<p class="ca-muted">A imagem aparece na identificação do município para os profissionais.</p></aside>
+</div>
+<div class="ca-save-bar"><a class="outline" href="{% url 'contas:inicio' %}">Cancelar</a><button type="submit">Salvar dados da Secretaria</button></div>
+</form>
+{% endblock %}

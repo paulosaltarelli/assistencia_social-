@@ -1,0 +1,26 @@
+.beneficio-cab {display:flex;align-items:center;justify-content:space-between;gap:1rem;margin:1.25rem 0}
+.beneficio-cab h1,.beneficio-cab p {margin:0}
+.beneficio-cab p {margin-top:.4rem;color:#47586a}
+.beneficio-estado {background:#e7eef8;color:#244876;padding:.45rem .85rem;border-radius:2rem}
+dl.beneficio-resumo {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem;margin:1rem 0 1.4rem}
+.beneficio-resumo div {background:white;border:1px solid #d7e1e9;border-top:3px solid #27756e;padding:1rem;border-radius:.55rem}
+.beneficio-resumo dt,.beneficio-fatos dt {color:#526273;font-size:.85rem}
+.beneficio-resumo dd {margin:.35rem 0 0;font-size:clamp(1.1rem,2vw,1.6rem);font-weight:700}
+.beneficio-corpo {display:grid;grid-template-columns:minmax(0,3fr) minmax(16rem,2fr);gap:1.2rem;align-items:start}
+.beneficio-corpo .panel {margin:0 0 1rem;overflow-wrap:anywhere}
+.beneficio-corpo h2 {margin-top:0}
+.beneficio-corpo details {padding:.75rem 0;border-top:1px solid #dee5eb}
+.beneficio-corpo summary {cursor:pointer;font-weight:600}
+dl.beneficio-fatos {display:grid;gap:.7rem}
+.beneficio-fatos dd {margin:.18rem 0}
+@media(max-width:800px){.beneficio-corpo {grid-template-columns:1fr}}
+@media(max-width:550px){.beneficio-cab {align-items:flex-start;flex-direction:column}dl.beneficio-resumo {grid-template-columns:1fr;gap:.4rem}.beneficio-resumo div {display:flex;align-items:center;justify-content:space-between;gap:.5rem}.beneficio-resumo dd {margin:0}}
+.historico-programa ol {list-style:none;padding-left:.65rem}
+.historico-programa li {border-left:2px solid #bbd5d0;padding:0 0 1rem 1rem;position:relative}
+.historico-programa li::before {content:"";width:.65rem;height:.65rem;border-radius:50%;background:#27756e;position:absolute;left:-.4rem;top:.35rem}
+.historico-programa li time {display:block;color:#536374;font-size:.85rem}
+.historico-programa li p {margin:.3rem 0}
+.historico-programa pre {white-space:pre-wrap;overflow-wrap:anywhere}
+.programa-filtros {display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,14rem),1fr));align-items:end;gap:.7rem;margin-top:.8rem}
+.programa-filtros p {margin:0}
+.programa-filtros input,.programa-filtros select {width:100%}

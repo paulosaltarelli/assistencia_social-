@@ -1,14 +1,16 @@
 {% extends "app_shell.html" %}
+{% load static %}
+{% block estilos %}<link rel="stylesheet" href="{% static 'programas/ficha.css' %}">{% endblock %}
 {% block conteudo %}
-<h1>{{ titulo }}</h1>
+<header class="beneficio-cab"><h1>{{ titulo }}</h1>
 <nav class="actions">
 {% if area == 'beneficio' %}{% if pode_beneficios %}<a class="button" href="{% url 'programas:beneficio_novo' %}">Solicitar benefício</a>{% endif %}<a href="{% url 'programas:tipos' %}">Tipos e regras locais</a>{% endif %}
 {% if area == 'material' %}{% if pode_materiais %}<a class="button" href="{% url 'programas:pedido_novo' %}">Solicitar materiais</a>{% endif %}<a href="{% url 'programas:estoque' %}">Consultar estoque</a>{% endif %}
 {% if area == 'vale' and pode_vale %}<a class="button" href="{% url 'programas:vale_novo' %}">Nova solicitação</a>{% endif %}
-</nav>
-<section class="panel"><form method="post" class="panel-body">{% csrf_token %}{{ filtros.as_p }}<button>Filtrar</button><a href="?">Limpar filtros</a></form></section>
-<section class="panel"><div class="table-wrap"><table><thead><tr><th>Data</th><th>Pessoa / família</th><th>Tipo / material</th><th>Situação</th><th>Consultar</th></tr></thead><tbody>
-{% for item in pagina %}<tr><td>{{ item.solicitado_em|date:'d/m/Y' }}</td><td>{{ item.cidadao.nome|default:'Solicitação familiar' }} · {{ item.familia.referencia }}</td><td>{% if area == 'beneficio' %}{{ item.tipo.nome }}{% elif area == 'material' %}{{ item.material.nome }}{% else %}R$ {{ item.valor }} · {{ item.get_periodicidade_display }}{% endif %}</td><td>{{ item.get_situacao_display }}</td><td><a href="{% url detalhe item.pk %}">Abrir</a></td></tr>{% empty %}<tr><td colspan="5">Nenhum registro encontrado.</td></tr>{% endfor %}
+</nav></header>
+<section class="panel"><details {% if request.method == "POST" %}open{% endif %}><summary>Filtrar registros</summary><form method="post" class="programa-filtros">{% csrf_token %}{{ filtros.as_p }}<button>Filtrar</button><a href="?">Limpar filtros</a></form></details></section>
+<section class="panel"><h2>Solicitações <small>({{ pagina.paginator.count }})</small></h2><div class="table-wrap"><table><thead><tr><th>Data</th><th>Pessoa / família</th><th>Tipo / material</th><th>Situação</th><th>Consultar</th></tr></thead><tbody>
+{% for item in pagina %}<tr><td>{{ item.solicitado_em|date:'d/m/Y' }}</td><td>{{ item.cidadao.nome|default:'Solicitação familiar' }} · {{ item.familia.referencia }}</td><td>{% if area == 'beneficio' %}{{ item.tipo.nome }}{% elif area == 'material' %}{{ item.material.nome }}{% else %}R$ {{ item.valor }} · {{ item.get_periodicidade_display }}{% endif %}</td><td><span class="status-label">{{ item.get_situacao_display }}</span></td><td><a href="{% url detalhe item.pk %}">Abrir</a></td></tr>{% empty %}<tr><td colspan="5">Nenhum registro encontrado.</td></tr>{% endfor %}
 </tbody></table></div></section>
 <nav aria-label="Paginação"><p>{{ pagina.paginator.count }} registros · Página {{ pagina.number }} de {{ pagina.paginator.num_pages }}</p><form method="post">{% csrf_token %}{% for campo in filtros %}{{ campo.as_hidden }}{% endfor %}{% if pagina.has_previous %}<button class="secondary" name="pagina" value="{{ pagina.previous_page_number }}">Anterior</button>{% endif %} {% if pagina.has_next %}<button class="secondary" name="pagina" value="{{ pagina.next_page_number }}">Próxima</button>{% endif %}</form></nav>
 {% endblock %}

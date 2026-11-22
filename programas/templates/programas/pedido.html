@@ -1,8 +1,15 @@
 {% extends "app_shell.html" %}
+{% load static %}
+{% block estilos %}<link rel="stylesheet" href="{% static 'programas/ficha.css' %}">{% endblock %}
 {% block conteudo %}
-<h1>Solicitação de {{ objeto.material.nome }}</h1><p><a href="{% url 'programas:pedidos' %}">Voltar às solicitações</a> · <a href="{% url 'documentos:vinculo' 'material' objeto.pk %}">Documentos e comprovantes</a></p>
-<section class="panel"><dl><dt>Protocolo da origem</dt><dd><code>{{ objeto.pk }}</code></dd><dt>Família / cidadão</dt><dd>{{ objeto.familia }} · {{ objeto.cidadao.nome|default:'Solicitação familiar' }}</dd><dt>Data e situação</dt><dd>{{ objeto.solicitado_em|date:'d/m/Y' }} · {{ objeto.get_situacao_display }}</dd><dt>Material</dt><dd><a href="{% url 'programas:material_detalhe' objeto.material_id %}">{{ objeto.material }}</a></dd><dt>Quantidade</dt><dd>Solicitada {{ objeto.quantidade_solicitada }} · Aprovada {{ objeto.quantidade_aprovada }} · Entregue {{ objeto.entregue }}</dd><dt>Disponível no estoque</dt><dd>{{ objeto.material.saldo }} {{ objeto.material.unidade }}</dd><dt>Justificativa</dt><dd>{{ objeto.justificativa|linebreaksbr }}</dd></dl></section>
+<nav aria-label="Navegação da solicitação"><a href="{% url 'programas:pedidos' %}">Voltar às solicitações</a> · {% if 'documentos.ver' in direitos %}<a href="{% url 'documentos:vinculo' 'material' objeto.pk %}">Documentos e comprovantes</a>{% endif %}</nav>
+<header class="beneficio-cab"><div><h1>Solicitação de {{ objeto.material.nome }}</h1><p>{{ objeto.familia }} · {{ objeto.cidadao.nome|default:"Solicitação familiar" }}</p></div><strong class="beneficio-estado">{{ objeto.get_situacao_display }}</strong></header>
+<div class="beneficio-corpo"><div>
 {% if pode_editar %}<section class="panel"><h2>Avaliar solicitação</h2><form method="post">{% csrf_token %}<input type="hidden" name="acao" value="decisao">{{ form.as_p }}<button>Registrar decisão</button></form></section><section class="panel"><h2>Registrar entrega e saída de estoque</h2><form method="post">{% csrf_token %}<input type="hidden" name="acao" value="entrega">{{ form_entrega.as_p }}<button>Confirmar entrega</button></form></section>{% endif %}
 {% if pode_vincular_financeiro %}<p><a class="button secondary" href="{% url 'financeiro:nova_despesa' %}?origem_tipo=material&amp;origem_id={{ objeto.pk }}">Criar despesa vinculada a esta origem</a></p>{% endif %}
-{% include 'programas/historico.html' %}
+{% include 'programas/historico.html' %}</div><aside><section class="panel"><h2>Detalhes da solicitação</h2><dl class="beneficio-fatos"><div><dt>Material</dt><dd><a href="{% url 'programas:material_detalhe' objeto.material_id %}">{{ objeto.material }}</a></dd></div>
+<div><dt>Quantidade</dt><dd>Solicitada {{ objeto.quantidade_solicitada }} · Aprovada {{ objeto.quantidade_aprovada }} · Entregue {{ objeto.entregue }}</dd></div>
+<div><dt>Disponível no estoque</dt><dd>{{ objeto.material.saldo }} {{ objeto.material.unidade }}</dd></div>
+<div><dt>Justificativa</dt><dd>{{ objeto.justificativa|linebreaksbr }}</dd></div>
+<div><dt>Solicitação</dt><dd>{{ objeto.solicitado_em|date:"d/m/Y" }}</dd></div></dl><details><summary>Protocolo da origem</summary><code>{{ objeto.pk }}</code></details></section></aside></div>
 {% endblock %}

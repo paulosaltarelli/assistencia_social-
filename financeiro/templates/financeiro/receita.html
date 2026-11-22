@@ -1,28 +1,10 @@
 {% extends "financeiro/base.html" %}{% load financas %}
 {% block corpo %}
-<a class="voltar" href="{% url 'financeiro:cadastro' 'receitas' %}">Receitas e transferências</a>
-<h1>{{ titulo }}</h1>
-<section>
-  <h2>{{ receita.valor|reais }}</h2>
-  <dl>
-    <dt>Data</dt><dd>{{ receita.data|date:"d/m/Y" }}</dd>
-    <dt>Instituição de origem</dt><dd>{{ receita.origem }}</dd>
-    <dt>Documento</dt><dd>{{ receita.documento }}</dd>
-    <dt>Exercício e dotação</dt><dd>{{ receita.dotacao.exercicio }} · {{ receita.dotacao.codigo }}</dd>
-    <dt>Fonte</dt><dd>{{ receita.dotacao.fonte }}</dd>
-    <dt>Fundo</dt><dd>{{ receita.dotacao.fundo }}</dd>
-    <dt>Programa</dt><dd>{{ receita.dotacao.programa }}</dd>
-    <dt>Registrado por</dt><dd>{{ receita.responsavel.get_username }}</dd>
-  </dl>
+<nav class="fin-crumb" aria-label="Navegação"><a href="{% url 'financeiro:cadastro' 'receitas' %}">Receitas e transferências</a></nav>
+<header class="fin-heading"><div><h1>{{ titulo }}</h1><p>{{ receita.data|date:'d/m/Y' }} · {{ receita.documento }}</p></div></header>
+<section class="fin-card"><div class="fin-section-head"><h2>{{ receita.origem }}</h2><strong class="fin-receipt-amount">{{ receita.valor|reais }}</strong></div>
+<dl class="fin-detail-grid"><div><dt>Exercício</dt><dd>{{ receita.dotacao.exercicio }}</dd></div><div><dt>Dotação</dt><dd>{{ receita.dotacao.codigo }}</dd></div><div><dt>Fonte</dt><dd>{{ receita.dotacao.fonte }}</dd></div><div><dt>Fundo</dt><dd>{{ receita.dotacao.fundo }}</dd></div><div><dt>Programa</dt><dd>{{ receita.dotacao.programa }}</dd></div><div><dt>Registrado por</dt><dd>{{ receita.responsavel.get_username }}</dd></div></dl>
 </section>
-<section>
-  <h2>Comprovantes</h2>
-  {% if receita.comprovante %}<p>{{ receita.comprovante }}</p>{% endif %}
-  {% if documentos %}
-    <nav class="acoes" aria-label="Comprovantes da receita">
-      <a href="{% url 'documentos:vinculo' 'receita' receita.pk %}">Consultar documentos</a>
-      {% if anexa %}<a href="{% url 'documentos:anexar' 'receita' receita.pk %}">Anexar comprovante</a>{% endif %}
-    </nav>
-  {% endif %}
-</section>
+<section class="fin-card"><h2>Comprovantes</h2>{% if receita.comprovante %}<p>{{ receita.comprovante }}</p>{% endif %}
+{% if documentos %}<nav class="fin-actions" aria-label="Comprovantes da receita"><a href="{% url 'documentos:vinculo' 'receita' receita.pk %}">Consultar documentos</a>{% if anexa %}<a class="button secondary" href="{% url 'documentos:anexar' 'receita' receita.pk %}">Anexar comprovante</a>{% endif %}</nav>{% endif %}</section>
 {% endblock %}

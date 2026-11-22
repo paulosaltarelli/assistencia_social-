@@ -10,6 +10,7 @@ from contas.permissoes import permissoes_efetivas
 from financeiro.consultas import resumo_financeiro
 from programas.models import ConcessaoVale, PedidoMaterial, SolicitacaoBeneficio
 from relatorios.consultas import series_resumidas
+from relatorios.territorial import resumo_territorial
 
 from .acesso import municipal, registrar_evento
 from .models import Atendimento, Cidadao, Familia
@@ -73,4 +74,5 @@ def inicio(request):
         "financas": financas,
         "hoje": hoje,
         "series_resumidas": series_resumidas(municipio, request.vinculo),
+        "territorial": resumo_territorial(municipio, request.vinculo, direitos=direitos, hoje=hoje),
     })

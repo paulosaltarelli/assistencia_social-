@@ -1,37 +1,40 @@
-{% extends "financeiro/base.html" %}{% load financas %}{% block corpo %}
-<h1>{{ titulo }}</h1>
-<nav class="acoes" aria-label="Financeiro">
-{% if pode_ver %}<a href="{% url 'financeiro:central' %}">Central de despesas</a>{% endif %}
-{% if edita %}<a href="{% url 'financeiro:nova_despesa' %}">Registrar despesa</a>{% endif %}
-{% if pode_gestao and not gestor %}<a href="{% url 'financeiro:gestor' %}">Painel do gestor</a>{% endif %}
-{% if gestor %}<a href="{% url 'financeiro:auditoria' %}">Auditoria financeira</a>{% if documentos %}<a href="{% url 'documentos:prestacao' %}">Arquivo de prestação de contas</a>{% endif %}{% if pode_relatorios %}<a href="{% url 'relatorios:inicio' %}">Relatórios</a>{% endif %}{% endif %}
-</nav>
-<section><h2>Período e classificação</h2>
-<form method="get">{% include "financeiro/campos.html" with form=filtros %}
-<div class="acoes"><label for="grupo">Agrupar execução por</label><select name="grupo" id="grupo"><option value="fonte">Fonte</option><option value="fundo" {% if grupo == 'fundo' %}selected{% endif %}>Fundo</option><option value="programa" {% if grupo == 'programa' %}selected{% endif %}>Programa</option><option value="mes" {% if grupo == 'mes' %}selected{% endif %}>Mês</option></select><button>Aplicar filtros</button><a href="{{ request.path }}">Limpar</a></div></form>
-<small>Os valores acumulam as operações até o fim do mês selecionado, no exercício da dotação.</small></section>
+{% extends "financeiro/base.html" %}{% load financas %}
+{% block corpo %}
+<header class="fin-heading"><div><h1>{{ titulo }}</h1><p>Execução orçamentária e financeira · Exercício {{ filtros.ano.value }}</p></div>
+  <nav class="fin-actions" aria-label="Ações financeiras">
+    {% if pode_ver %}<a class="button secondary" href="{% url 'financeiro:central' %}">Central de despesas</a>{% endif %}
+    {% if edita %}<a class="button" href="{% url 'financeiro:nova_despesa' %}">Registrar despesa</a>{% endif %}
+  </nav>
+</header>
+<details class="fin-filter"{% if request.GET or filtros.errors %} open{% endif %}>
+  <summary>Filtros de exercício e classificação</summary>
+  <form method="get">{% include "financeiro/campos.html" with form=filtros %}
+    <div class="fin-actions"><label for="grupo">Agrupar por</label><select name="grupo" id="grupo"><option value="fonte">Fonte</option><option value="fundo" {% if grupo == 'fundo' %}selected{% endif %}>Fundo</option><option value="programa" {% if grupo == 'programa' %}selected{% endif %}>Programa</option><option value="mes" {% if grupo == 'mes' %}selected{% endif %}>Mês</option></select><button>Aplicar filtros</button><a href="{{ request.path }}">Limpar</a></div>
+    <small>Os valores acumulam as operações até o fim do mês selecionado no exercício.</small>
+  </form>
+</details>
 {% if resumo %}
-<section><h2>Orçamento</h2><div class="grade">
-<article>Orçamento inicial<strong>{{ resumo.orcamento_inicial|reais }}</strong></article>
-<article>Orçamento atualizado<strong>{{ resumo.orcamento_atualizado|reais }}</strong></article>
-<article>Saldo orçamentário<strong>{{ resumo.saldo_orcamentario|reais }}</strong><small>Atualizado menos empenhos</small></article>
-<article>Execução por empenho<strong>{{ resumo.execucao_percentual|floatformat:1 }}%</strong></article></div></section>
-<section><h2>Receitas e caixa</h2><div class="grade">
-<article>Saldo de abertura<strong>{{ resumo.saldo_inicial|reais }}</strong></article>
-<article>Receitas previstas<strong>{{ resumo.previsto|reais }}</strong></article>
-<article>Recebido<strong>{{ resumo.recebido|reais }}</strong></article>
-<article>Saldo financeiro<strong>{{ resumo.saldo_financeiro|reais }}</strong><small>Abertura + recebimentos − pagamentos</small></article></div></section>
-{% if gestor %}<section><h2>Recebimentos por origem</h2><div class="grade">{% for nome, valor in recursos %}<article>{{ nome }}<strong>{{ valor|reais }}</strong></article>{% endfor %}</div></section>{% endif %}
-<section><h2>Execução da despesa</h2><div class="grade">
-<article>Compromissos em aberto<strong>{{ resumo.comprometido|reais }}</strong></article>
-<article>Empenhado<strong>{{ resumo.empenhado|reais }}</strong></article>
-<article>Liquidado<strong>{{ resumo.liquidado|reais }}</strong></article>
-<article>Pago<strong>{{ resumo.pago|reais }}</strong></article></div></section>
-<section><h2>Execução por {{ grupo|capfirst }}</h2>
-{% if quadro %}<div class="tabela"><table><thead><tr><th>{{ grupo|capfirst }}</th><th>Recebido</th><th>Empenhado</th><th>Liquidado</th><th>Pago</th></tr></thead><tbody>
-{% for row in quadro %}<tr><th>{{ row.rotulo }}</th><td>{{ row.recebido|reais }}</td><td>{{ row.empenho|reais }}</td><td>{{ row.liquidacao|reais }}</td><td class="moeda">{{ row.pagamento|reais }} <meter min="0" max="100" value="{{ row.percentual_pago }}" aria-label="Valor pago em proporção ao maior grupo"></meter></td></tr>{% endfor %}
-</tbody></table></div>{% else %}<p class="sem">Nenhuma execução no recorte selecionado.</p>{% endif %}</section>
-{% if gestor %}<section><h2>Conferência</h2><div class="grade"><article><a href="{% url 'financeiro:central' %}?{{ filtros.data.urlencode }}&amp;conferencia=pendente">Despesas com conferência contábil pendente</a><strong>{{ pendentes }}</strong></article>{% if documentos %}<article>Notas fiscais<strong>{{ documentos.notas }}</strong></article><article>Documentos pendentes<strong>{{ documentos.documentos_pendentes }}</strong></article><article>Despesas sem anexos<strong>{{ documentos.despesas_sem_documentos }}</strong></article>{% endif %}</div></section>{% endif %}
+<section class="fin-balance" aria-label="Saldos no período">
+  <div><h2>Saldo orçamentário</h2><strong>{{ resumo.saldo_orcamentario|reais }}</strong><p>Orçamento atualizado menos empenhos</p></div>
+  <div><h2>Saldo financeiro</h2><strong>{{ resumo.saldo_financeiro|reais }}</strong><p>Saldo de abertura mais recebimentos menos pagamentos</p></div>
+</section>
+<div class="fin-overview">
+  <section class="fin-card"><h2>Orçamento do exercício</h2><dl class="fin-totals"><div><dt>Inicial</dt><dd>{{ resumo.orcamento_inicial|reais }}</dd></div><div><dt>Atualizado</dt><dd>{{ resumo.orcamento_atualizado|reais }}</dd></div></dl><div class="fin-progress"><label for="execucao">Execução por empenho <strong>{{ resumo.execucao_percentual|floatformat:1 }}%</strong></label><progress id="execucao" max="100" value="{{ resumo.execucao_percentual|floatformat:'2u' }}"></progress></div></section>
+  <section class="fin-card"><h2>Receitas e caixa</h2><dl class="fin-totals"><div><dt>Saldo de abertura</dt><dd>{{ resumo.saldo_inicial|reais }}</dd></div><div><dt>Receitas previstas</dt><dd>{{ resumo.previsto|reais }}</dd></div><div><dt>Recebido</dt><dd>{{ resumo.recebido|reais }}</dd></div></dl></section>
+</div>
+<section class="fin-card"><h2>Execução da despesa</h2><dl class="fin-stage-strip">
+  <div><dt>Compromissos em aberto</dt><dd>{{ resumo.comprometido|reais }}</dd></div>
+  <div><dt>Empenhado</dt><dd>{{ resumo.empenhado|reais }}</dd></div>
+  <div><dt>Liquidado</dt><dd>{{ resumo.liquidado|reais }}</dd></div>
+  <div><dt>Pago</dt><dd>{{ resumo.pago|reais }}</dd></div>
+</dl></section>
+<section class="fin-card"><h2>Execução por {% if grupo == 'mes' %}mês{% else %}{{ grupo }}{% endif %}</h2>
+{% if quadro %}<div class="tabela" tabindex="0" role="region" aria-label="Execução financeira por grupo"><table class="fin-money-table"><thead><tr><th scope="col">{% if grupo == 'mes' %}Mês{% else %}{{ grupo|capfirst }}{% endif %}</th><th scope="col">Recebido</th><th scope="col">Empenhado</th><th scope="col">Liquidado</th><th scope="col">Pago</th></tr></thead><tbody>
+{% for row in quadro %}<tr><th scope="row">{{ row.rotulo }}</th><td>{{ row.recebido|reais }}</td><td>{{ row.empenho|reais }}</td><td>{{ row.liquidacao|reais }}</td><td>{{ row.pagamento|reais }}<meter min="0" max="100" value="{{ row.percentual_pago }}" aria-label="Pago em relação ao grupo com maior pagamento"></meter></td></tr>{% endfor %}
+</tbody></table></div>{% else %}<p class="sem">Nenhuma execução no período selecionado.</p>{% endif %}</section>
+{% if gestor %}<div class="fin-overview"><section class="fin-card"><h2>Recebimentos por origem</h2><dl class="fin-totals">{% for nome, valor in recursos %}<div><dt>{{ nome }}</dt><dd>{{ valor|reais }}</dd></div>{% endfor %}</dl></section>
+<section class="fin-card"><h2>Conferência</h2><dl class="fin-totals"><div><dt><a href="{% url 'financeiro:central' %}?{{ filtros.data.urlencode }}&amp;conferencia=pendente">Despesas com conferência contábil pendente</a></dt><dd>{{ pendentes }}</dd></div>{% if documentos %}<div><dt>Notas fiscais</dt><dd>{{ documentos.notas }}</dd></div><div><dt>Documentos pendentes</dt><dd>{{ documentos.documentos_pendentes }}</dd></div><div><dt>Despesas sem anexos</dt><dd>{{ documentos.despesas_sem_documentos }}</dd></div>{% endif %}</dl></section></div>{% endif %}
 {% endif %}
-{% if pode_ver %}<section><h2>Cadastros e movimentações</h2><div class="lista-links">{% for chave,nome in cadastros %}<a href="{% url 'financeiro:cadastro' chave %}">{{ nome }}</a>{% endfor %}</div></section>{% endif %}
+{% if pode_ver %}<section class="fin-card"><h2>Cadastros e movimentações</h2><nav class="fin-link-grid" aria-label="Cadastros financeiros">{% for chave,nome in cadastros %}<a href="{% url 'financeiro:cadastro' chave %}">{{ nome }}</a>{% endfor %}</nav></section>{% endif %}
+{% if gestor or pode_gestao %}<nav class="fin-actions fin-related" aria-label="Acessos da gestão">{% if gestor %}<a href="{% url 'financeiro:auditoria' %}">Auditoria financeira</a>{% if documentos %}<a href="{% url 'documentos:prestacao' %}">Arquivo de prestação de contas</a>{% endif %}{% if pode_relatorios %}<a href="{% url 'relatorios:inicio' %}">Relatórios</a>{% endif %}{% else %}<a href="{% url 'financeiro:gestor' %}">Painel do gestor</a>{% endif %}</nav>{% endif %}
 {% endblock %}

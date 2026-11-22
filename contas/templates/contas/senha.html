@@ -1,1 +1,6 @@
-{% extends "app_shell.html" %}{% block conteudo %}<header class="page-heading"><h1>Alterar minha senha</h1></header><section class="card"><form method="post">{% csrf_token %}{{ form.as_p }}<button class="button">Alterar senha e encerrar outras sessões</button></form></section>{% endblock %}
+{% extends "contas/base_contas.html" %}
+{% block title %}Alterar minha senha · Gestão Social Municipal{% endblock %}
+{% block contas %}
+<a class="ca-back" href="{% url 'contas:inicio' %}">← Minha conta</a><header class="page-header"><div><h1>Alterar minha senha</h1><p>Use uma senha exclusiva para seu acesso profissional.</p></div></header>
+<section class="ca-card ca-narrow"><form method="post" class="ca-form">{% csrf_token %}{{ form.non_field_errors }}{% for field in form %}<div class="ca-field"><label for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}{{ field.errors }}{% if field.help_text %}<div class="ca-help">{{ field.help_text|safe }}</div>{% endif %}</div>{% endfor %}<div class="ca-security-note"><strong>Suas outras sessões serão encerradas</strong><p>Esta sessão continuará disponível com a senha atualizada.</p></div><div class="ca-save-bar"><a class="outline" href="{% url 'contas:inicio' %}">Cancelar</a><button type="submit">Salvar nova senha</button></div></form></section>
+{% endblock %}

@@ -1,28 +1,27 @@
-{% extends "app_shell.html" %}
+{% extends "documentos/base.html" %}
 {% load links_documentais %}
-{% block conteudo %}
-<div class="page-header"><div><h1>{{ atual.nome }}</h1><p>{{ documento.get_categoria_display }} · Versão {{ atual.sequencia }} · {{ estado }}</p></div>
-{% if editar %}<a class="button secondary" href="{% url 'documentos:substituir' documento.pk %}">Anexar nova versão</a>{% endif %}</div>
-<p><a href="{% url 'documentos:vinculo' documento.alvo origem_id %}">Documentos do processo</a></p>
-<section class="panel"><div class="panel-body">
-<a class="button" href="{% acesso_original atual.pk 'visualizar' %}" target="_blank" rel="noopener noreferrer">Visualizar original</a>
-<a class="button secondary" href="{% acesso_original atual.pk 'baixar' %}">Baixar original</a>
-{% if documento.categoria == "nota" %}<dl><dt>Nota fiscal</dt><dd>{{ atual.numero_nota }} · Série {{ atual.serie_nota|default:"—" }} · Emissão {{ atual.data_emissao|date:"d/m/Y" }}</dd>
-<dt>Emitente</dt><dd>{{ atual.razao_social }} · {{ atual.cnpj_emissor }}</dd><dt>Valor</dt><dd>R$ {{ atual.valor_nota|floatformat:2 }}</dd>
-{% if atual.chave_nfe %}<dt>Chave de acesso</dt><dd style="overflow-wrap:anywhere">{{ atual.chave_nfe }}</dd>{% endif %}
-{% if atual.descricao_itens %}<dt>Produtos e serviços</dt><dd>{{ atual.descricao_itens }}</dd>{% endif %}</dl>{% endif %}
-{% if atual.processo_referencia %}<p>Processo {{ atual.processo_referencia }}</p>{% endif %}
-{% if atual.empenho_referencia %}<p>Empenho {{ atual.empenho_referencia }}</p>{% endif %}
-{% if documento.despesa_id %}<p>{{ documento.despesa.dotacao.fundo.nome }} · {{ documento.despesa.dotacao.fonte.nome }} · {{ documento.despesa.dotacao.programa.nome }}</p>{% endif %}
-{% if similares %}<div class="notice"><strong>Possível duplicidade fiscal</strong><p>Confira as notas com a mesma chave ou combinação de emitente, número, série e valor.</p><ul>{% for similar in similares %}<li><a href="{% url 'documentos:detalhe' similar.documento_id %}">{{ similar.nome }}</a></li>{% endfor %}</ul></div>{% endif %}
-</div></section>
-<section class="panel"><div class="section-head"><h2>Versões e conferências</h2></div><div class="panel-body">
-{% for v in versoes %}<article><h3>Versão {{ v.sequencia }} · {{ v.nome }}</h3><p>{{ v.criado_em|date:"d/m/Y H:i" }} · {{ v.responsavel.get_username }} · {{ v.tamanho|filesizeformat }}</p>
-{% if v.observacao %}<p>{{ v.observacao }}</p>{% endif %}
-<p><a href="{% acesso_original v.pk 'baixar' %}">Baixar versão {{ v.sequencia }}</a></p>
-<details><summary>Identificação do original</summary><code style="overflow-wrap:anywhere">SHA-256 {{ v.sha256 }}</code></details>
-<ul>{% for c in v.conferencias.all %}<li>{{ c.criado_em|date:"d/m/Y H:i" }} · {{ c.get_situacao_display }} · {{ c.responsavel.get_username }}{% if c.motivo %} · {{ c.motivo }}{% endif %}{% if c.providencia %} · {{ c.providencia }}{% endif %}{% if c.observacao %} · {{ c.observacao }}{% endif %}</li>{% endfor %}</ul></article>{% endfor %}</div></section>
-{% if editar %}<section class="panel"><div class="section-head"><h2>Conferir versão {{ atual.sequencia }}</h2></div>
-<form class="panel-body" action="{% url 'documentos:conferir' atual.pk %}" method="post">{% csrf_token %}<div class="form-grid">{% for campo in conferencia %}<div class="field">{{ campo.as_field_group }}</div>{% endfor %}</div>
-<div class="form-actions"><button>Registrar conferência</button></div></form></section>{% endif %}
+{% block acervo %}
+<nav class="doc-retorno" aria-label="Navegação do processo"><a href="{% url 'documentos:vinculo' documento.alvo origem_id %}">Documentos do processo</a></nav>
+<header class="doc-header"><div><h1>{{ atual.nome }}</h1><p>{{ documento.get_categoria_display }}{% if documento.sigilo_tecnico %} · Acesso técnico restrito{% endif %}</p></div><div class="doc-acoes"><a class="button" href="{% acesso_original atual.pk 'visualizar' %}" target="_blank" rel="noopener noreferrer">Visualizar original</a><a class="button secondary" href="{% acesso_original atual.pk 'baixar' %}">Baixar original</a></div></header>
+{% if similares %}<aside class="doc-aviso"><h2>Possível duplicidade fiscal</h2><p>Confira as notas com a mesma chave ou combinação de emitente, número, série e valor.</p><ul>{% for similar in similares %}<li><a href="{% url 'documentos:detalhe' similar.documento_id %}">{{ similar.nome }}</a></li>{% endfor %}</ul></aside>{% endif %}
+<section class="doc-painel"><div class="doc-topo"><h2>Versão atual</h2>{% include "documentos/estado.html" with estado=atual.estado_atual only %}</div>
+ <dl class="doc-fatos doc-interno"><div><dt>Versão</dt><dd>{{ atual.sequencia }}</dd></div><div><dt>Arquivo</dt><dd>{% include "documentos/formato.html" with mime=atual.mime only %} {{ atual.tamanho|filesizeformat }}</dd></div><div><dt>Anexação</dt><dd>{{ atual.criado_em|date:"d/m/Y H:i" }}</dd></div><div><dt>Responsável</dt><dd>{{ atual.responsavel.get_full_name|default:atual.responsavel.get_username }}</dd></div>{% if atual.vencimento %}<div><dt>Vencimento</dt><dd>{{ atual.vencimento|date:"d/m/Y" }}</dd></div>{% endif %}</dl>
+ {% if atual.observacao %}<p class="doc-comentario">{{ atual.observacao }}</p>{% endif %}
+</section>
+{% if documento.categoria == "nota" or atual.processo_referencia or atual.empenho_referencia or documento.despesa_id %}
+<section class="doc-painel"><div class="doc-topo"><h2>{% if documento.categoria == "nota" %}Identificação fiscal{% else %}Referências financeiras{% endif %}</h2></div>
+ <dl class="doc-fatos doc-interno">{% if documento.categoria == "nota" %}<div><dt>Número da nota</dt><dd>{{ atual.numero_nota }}</dd></div><div><dt>Série</dt><dd>{{ atual.serie_nota|default:"—" }}</dd></div><div><dt>Emissão</dt><dd>{{ atual.data_emissao|date:"d/m/Y" }}</dd></div><div><dt>Valor total</dt><dd>R$ {{ atual.valor_nota|floatformat:2 }}</dd></div><div><dt>Emitente</dt><dd>{{ atual.razao_social }}</dd></div><div><dt>CNPJ</dt><dd>{{ atual.cnpj_emissor }}</dd></div>
+ {% if atual.chave_nfe %}<div class="doc-amplo"><dt>Chave de acesso da NF-e</dt><dd class="doc-codigo">{{ atual.chave_nfe }}</dd></div>{% endif %}
+ {% if atual.descricao_itens %}<div class="doc-amplo"><dt>Produtos e serviços</dt><dd>{{ atual.descricao_itens }}</dd></div>{% endif %}{% endif %}
+ {% if atual.processo_referencia %}<div><dt>Processo</dt><dd>{{ atual.processo_referencia }}</dd></div>{% endif %}
+ {% if atual.empenho_referencia %}<div><dt>Empenho</dt><dd>{{ atual.empenho_referencia }}</dd></div>{% endif %}
+ {% if documento.despesa_id %}<div><dt>Fundo</dt><dd>{{ documento.despesa.dotacao.fundo.nome }}</dd></div><div><dt>Fonte</dt><dd>{{ documento.despesa.dotacao.fonte.nome }}</dd></div><div><dt>Programa</dt><dd>{{ documento.despesa.dotacao.programa.nome }}</dd></div>{% endif %}</dl>
+</section>{% endif %}
+<section class="doc-painel"><div class="doc-topo"><div><h2>Versões e conferências</h2><p>{% if versoes|length == 1 %}1 versão registrada{% else %}{{ versoes|length }} versões registradas{% endif %}</p></div>{% if editar %}<a class="button secondary" href="{% url 'documentos:substituir' documento.pk %}">Anexar nova versão</a>{% endif %}</div>
+ <ol class="doc-historico">{% for v in versoes %}<li><div class="doc-histcab"><div><h3>Versão {{ v.sequencia }}</h3><p>{{ v.nome }} · {{ v.criado_em|date:"d/m/Y H:i" }} · {{ v.responsavel.get_username }}</p></div><a href="{% acesso_original v.pk 'baixar' %}">Baixar versão {{ v.sequencia }}</a></div>
+ {% if v.observacao %}<p>{{ v.observacao }}</p>{% endif %}
+ <details class="doc-hash"><summary>Identificação do original</summary><p>SHA-256 <code>{{ v.sha256 }}</code></p></details>
+ {% if v.conferencias.all %}<ul class="doc-conferencias">{% for c in v.conferencias.all %}<li><strong>{{ c.get_situacao_display }}</strong><span>{{ c.criado_em|date:"d/m/Y H:i" }} · {{ c.responsavel.get_username }}</span>{% if c.motivo %}<p>Motivo · {{ c.motivo }}</p>{% endif %}{% if c.providencia %}<p>Providência · {{ c.providencia }}</p>{% endif %}{% if c.observacao %}<p>{{ c.observacao }}</p>{% endif %}</li>{% endfor %}</ul>{% endif %}</li>{% endfor %}</ol>
+</section>
+{% if editar %}<section class="doc-painel"><div class="doc-topo"><h2>Conferir versão {{ atual.sequencia }}</h2></div><form class="doc-interno" action="{% url 'documentos:conferir' atual.pk %}" method="post">{% csrf_token %}<div class="doc-campos">{% for campo in conferencia %}<div>{{ campo.as_field_group }}</div>{% endfor %}</div><div class="doc-acoes doc-rodape"><button>Registrar conferência</button></div></form></section>{% endif %}
 {% endblock %}
