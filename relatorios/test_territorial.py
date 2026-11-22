@@ -94,6 +94,19 @@ class TerritorialConsultasTests(TestCase):
         self.assertEqual(sem_direitos, {"disponivel": False})
         self.assertEqual(len(consultas), 0)
 
+    def test_pontos_contem_somente_indicadores_autorizados(self):
+        referencia = {"nome": "Bairro do teste", "aliases": [], "longitude": .7, "latitude": .2,
+            "coordenadas_distintas": 10, "metodo": "centro_amostral", "fonte": {"id": "fixture"}}
+        with patch("relatorios.territorial.carregar_malha", return_value={
+            "referencias": [referencia], "geometria": None, "fonte": None, "lacuna": "Fixture de teste",
+        }):
+            resultado = self.resumo({"materiais.ver"})
+        self.assertIsNone(resultado["pontos"][0]["atendimentos"])
+        self.assertEqual(resultado["pontos"][0]["demandas"], 2)
+        self.assertEqual(resultado["mapeados"]["demandas"], 2)
+        self.assertEqual(resultado["sem_ponto"]["demandas"], 0)
+        self.assertNotIn("Pessoa", str(resultado["pontos"]))
+
 
 class MalhaTerritorialTests(SimpleTestCase):
     def setUp(self):
