@@ -48,14 +48,16 @@ class FormCidadao(forms.ModelForm):
 @login_required
 @require_http_methods(["GET", "POST"])
 @transaction.atomic
-def painel(request):
+def painel(request, cadastro=None):
     vinculo = Vinculo.objects.filter(usuario=request.user).select_related("municipio").first()
     if not vinculo or vinculo.perfil not in {"gestor", "auditor", "tecnico"}:
         return HttpResponseForbidden()
     with connection.cursor() as cursor:
         cursor.execute("SELECT set_config('social.municipio', %s, true)", [str(vinculo.municipio_id)])
     tipos = {"atendimento": Formulario, "familia": FormFamilia, "cidadao": FormCidadao}
-    tipo = request.POST.get("tipo", "atendimento")
+    tipo = cadastro or request.POST.get("tipo", "atendimento")
+    if cadastro and vinculo.perfil == "auditor":
+        return HttpResponseForbidden()
     if tipo not in tipos:
         return HttpResponse(status=400)
     formularios = {nome: classe(request.POST if request.method == "POST" and tipo == nome else None)
@@ -84,6 +86,8 @@ def painel(request):
             messages.error(request, "Revise os campos indicados para concluir o registro.")
     Auditoria.objects.create(municipio=vinculo.municipio, usuario=request.user, evento=evento, objeto=objeto)
     if objeto:
+        if cadastro:
+            return redirect("cadastro", cadastro=cadastro)
         return redirect("painel")
     atendimentos = Atendimento.objects.filter(municipio=vinculo.municipio)
     resumo = {
@@ -102,6 +106,8 @@ def painel(request):
     total_registros = atendimentos.count()
     registros = atendimentos.select_related("cidadao").order_by("-criado", "-id")[:50]
     return render(request, "painel.html", {
+        "cadastro": cadastro,
+        "titulo": {"familia": "Famílias", "cidadao": "Cidadãos", "atendimento": "Novo atendimento"}.get(cadastro, "Visão geral"),
         "vinculo": vinculo,
         "formularios": formularios,
         "registros": registros,

@@ -1,18 +1,18 @@
 {% extends "base.html" %}
 {% load static %}
-{% block title %}Visão geral · Gestão Social Municipal{% endblock %}
+{% block title %}{{ titulo }} · Gestão Social Municipal{% endblock %}
 {% block layout %}
 <div class="app">
   <aside class="sidebar" aria-label="Navegação principal">
     <a class="brand" href="{% url 'painel' %}"><span class="brand-mark" aria-hidden="true">S</span><span><strong>Gestão Social</strong><small>Municipal</small></span></a>
     <nav>
-      <a href="#conteudo" aria-current="page"><span class="nav-dot" aria-hidden="true"></span>Visão geral</a>
+      <a href="{% url 'painel' %}" {% if not cadastro %}aria-current="page"{% endif %}><span class="nav-dot" aria-hidden="true"></span>Visão geral</a>
       {% if vinculo.perfil != "auditor" %}
-      <a href="#form-familia"><span class="nav-dot" aria-hidden="true"></span>Famílias</a>
-      <a href="#form-cidadao"><span class="nav-dot" aria-hidden="true"></span>Cidadãos</a>
-      <a href="#form-atendimento"><span class="nav-dot" aria-hidden="true"></span>Novo atendimento</a>
+      <a href="{% url 'cadastro' 'familia' %}"><span class="nav-dot" aria-hidden="true"></span>Famílias</a>
+      <a href="{% url 'cadastro' 'cidadao' %}"><span class="nav-dot" aria-hidden="true"></span>Cidadãos</a>
+      <a href="{% url 'cadastro' 'atendimento' %}"><span class="nav-dot" aria-hidden="true"></span>Novo atendimento</a>
       {% endif %}
-      <a href="#historico"><span class="nav-dot" aria-hidden="true"></span>Histórico de atendimentos</a>
+      <a href="{% url 'painel' %}#historico"><span class="nav-dot" aria-hidden="true"></span>Histórico de atendimentos</a>
     </nav>
     <div class="sidebar-bottom">Tecnologia para a gestão pública<br>Desenvolvido por <img class="vexo-logo" src="{% static 'atendimentos/vexo.png' %}" alt="Vexo"></div>
   </aside>
@@ -22,16 +22,17 @@
       <div class="account"><span class="avatar" aria-hidden="true">{{ request.user.username|first|upper }}</span><div class="account-info"><strong>{{ request.user.get_full_name|default:request.user.username }}</strong>{{ vinculo.get_perfil_display }}</div><form method="post" action="{% url 'logout' %}">{% csrf_token %}<button class="secondary" type="submit">Sair</button></form></div>
     </header>
     <main id="conteudo">
-      <div class="page-heading"><div><h1>Visão geral</h1><p>Organize os cadastros e acompanhe os atendimentos do município.</p></div>{% if vinculo.perfil != "auditor" %}<a class="button" href="#form-atendimento">Novo atendimento</a>{% endif %}</div>
+      <div class="page-heading"><div><h1>{{ titulo }}</h1><p>{% if cadastro %}<a href="{% url 'painel' %}">Voltar à visão geral</a>{% else %}Acompanhe os atendimentos e os cadastros do município.{% endif %}</p></div>{% if not cadastro and vinculo.perfil != "auditor" %}<a class="button" href="{% url 'cadastro' 'atendimento' %}">Novo atendimento</a>{% endif %}</div>
       {% if messages %}{% for message in messages %}<div class="notice" role="status">{{ message }}</div>{% endfor %}{% endif %}
-      <div class="summary-grid" aria-label="Resumo do município">
+      {% if not cadastro %}<div class="summary-grid" aria-label="Resumo do município">
         <section class="summary summary-accent"><div class="summary-label">Famílias cadastradas</div><div class="summary-value">{{ resumo.familias }}</div><div class="summary-note">Núcleos familiares do município</div></section>
         <section class="summary"><div class="summary-label">Cidadãos cadastrados</div><div class="summary-value">{{ resumo.cidadaos }}</div><div class="summary-note">Pessoas vinculadas às famílias</div></section>
         <section class="summary"><div class="summary-label">Atendimentos registrados</div><div class="summary-value">{{ resumo.atendimentos }}</div><div class="summary-note">{{ resumo.atendimentos_hoje }} realizado{{ resumo.atendimentos_hoje|pluralize }} hoje</div></section>
       </div>
-      {% if vinculo.perfil != "auditor" %}
-      <div class="forms-layout">
-        {% for tipo, form in formularios.items %}
+      {% endif %}
+      {% if cadastro and vinculo.perfil != "auditor" %}
+      <div>
+        {% for tipo, form in formularios.items %}{% if tipo == cadastro %}
         <section class="panel" id="form-{{ tipo }}" aria-labelledby="titulo-{{ tipo }}">
           <div class="panel-head"><div><h2 id="titulo-{{ tipo }}">{% if tipo == "familia" %}Cadastrar família{% elif tipo == "cidadao" %}Cadastrar cidadão{% else %}Registrar atendimento{% endif %}</h2><p>{% if tipo == "familia" %}Crie uma referência para vincular os integrantes da família.{% elif tipo == "cidadao" %}Vincule o cidadão a uma família já cadastrada.{% else %}Selecione o cidadão e registre a unidade e o encaminhamento.{% endif %}</p></div></div>
           <form method="post" class="panel-body">
@@ -43,18 +44,18 @@
             <div class="form-actions"><p>Todos os campos são obrigatórios.</p><button type="submit">{% if tipo == "familia" %}Cadastrar família{% elif tipo == "cidadao" %}Cadastrar cidadão{% else %}Salvar atendimento{% endif %}</button></div>
           </form>
         </section>
-        {% endfor %}
+        {% endif %}{% endfor %}
       </div>
       {% endif %}
-      <section class="panel" id="historico" aria-labelledby="titulo-historico">
+      {% if not cadastro %}<section class="panel" id="historico" aria-labelledby="titulo-historico">
         <div class="panel-head"><div><h2 id="titulo-historico">Atendimentos recentes</h2><p>Histórico dos registros realizados neste município.</p></div></div>
         <form class="search-form" method="get" action="#historico"><div class="field"><label for="busca">Buscar por cidadão, unidade ou encaminhamento</label><input type="search" id="busca" name="q" value="{{ busca }}" placeholder="Digite para buscar"></div><button class="secondary" type="submit">Buscar</button>{% if busca %}<a href="{% url 'painel' %}#historico">Limpar busca</a>{% endif %}</form>
         {% if registros %}
         <div class="table-wrap"><table><thead><tr><th scope="col">Data e hora</th><th scope="col">Cidadão</th><th scope="col">Unidade</th><th scope="col">Encaminhamento</th></tr></thead><tbody>{% for item in registros %}<tr><td>{{ item.criado|date:"d/m/Y" }} <span>{{ item.criado|date:"H:i" }}</span></td><td>{{ item.cidadao.nome|default:"—" }}</td><td>{{ item.unidade }}</td><td>{{ item.encaminhamento }}</td></tr>{% endfor %}</tbody></table></div>
         <div class="table-note">Exibindo {{ registros|length }} de {{ total_registros }} atendimento{{ total_registros|pluralize }}{% if busca %} encontrado{{ total_registros|pluralize }}{% endif %}.</div>
-        {% else %}<div class="empty-state"><h3>{% if busca %}Nenhum atendimento encontrado{% else %}O histórico começa no primeiro atendimento{% endif %}</h3><p>{% if busca %}Tente outro termo ou limpe a busca para ver os registros.{% elif vinculo.perfil == "auditor" %}Os registros realizados pela equipe aparecerão aqui.{% else %}Cadastre a família e o cidadão para registrar um atendimento.{% endif %}</p>{% if vinculo.perfil != "auditor" %}<a class="button secondary" href="#form-familia">Cadastrar uma família</a>{% endif %}</div>{% endif %}
+        {% else %}<div class="empty-state"><h3>{% if busca %}Nenhum atendimento encontrado{% else %}O histórico começa no primeiro atendimento{% endif %}</h3><p>{% if busca %}Tente outro termo ou limpe a busca para ver os registros.{% elif vinculo.perfil == "auditor" %}Os registros realizados pela equipe aparecerão aqui.{% else %}Cadastre a família e o cidadão para registrar um atendimento.{% endif %}</p>{% if vinculo.perfil != "auditor" %}<a class="button secondary" href="{% url 'cadastro' 'familia' %}">Cadastrar uma família</a>{% endif %}</div>{% endif %}
       </section>
-      <footer class="footer"><span>Gestão Social Municipal · {{ vinculo.municipio.nome }}</span><span>Desenvolvido por <img class="vexo-logo" src="{% static 'atendimentos/vexo.png' %}" alt="Vexo"></span></footer>
+      {% endif %}<footer class="footer"><span>Gestão Social Municipal · {{ vinculo.municipio.nome }}</span><span>Desenvolvido por <img class="vexo-logo" src="{% static 'atendimentos/vexo.png' %}" alt="Vexo"></span></footer>
     </main>
   </div>
 </div>
