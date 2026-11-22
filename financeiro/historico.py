@@ -7,7 +7,7 @@ from documentos.models import Conferencia, Estado, Versao
 from .models import Historico
 
 
-def eventos(queryset, categoria, texto, *, documento=None, numero=None, situacao=None, estado=None):
+def _eventos(queryset, categoria, texto, *, documento=None, numero=None, situacao=None, estado=None):
     # Todas as origens têm a mesma projeção para a paginação conjunta no PostgreSQL.
     return queryset.order_by().values(
         instante=F('criado_em'), chave=F('pk'), origem=Value(categoria), legenda=F(texto),
@@ -24,14 +24,14 @@ def linha_do_tempo(despesa, documentos, numero_pagina):
     objetos |= Q(objeto__in=despesa.conciliacoes.values('pk')) | Q(objeto__in=despesa.origens_sociais.values('pk'))
     registros = Historico.objects.filter(objetos, municipio_id=despesa.municipio_id)
     estado = Case(When(entidade='despesa', then=F('estado')), output_field=JSONField())
-    consulta = eventos(registros, 'financeiro', 'evento', estado=estado)
+    consulta = _eventos(registros, 'financeiro', 'evento', estado=estado)
     if documentos is not None:
         autorizados = documentos.filter(municipio_id=despesa.municipio_id, despesa=despesa)
         versoes = Versao.objects.filter(municipio_id=despesa.municipio_id, documento__in=autorizados)
         conferencias = Conferencia.objects.filter(municipio_id=despesa.municipio_id, versao__documento__in=autorizados)
         consulta = consulta.union(
-            eventos(versoes, 'versao', 'nome', documento='documento_id', numero='sequencia'),
-            eventos(conferencias, 'conferencia', 'versao__nome', documento='versao__documento_id', situacao='situacao'),
+            _eventos(versoes, 'versao', 'nome', documento='documento_id', numero='sequencia'),
+            _eventos(conferencias, 'conferencia', 'versao__nome', documento='versao__documento_id', situacao='situacao'),
             all=True,
         )
     pagina = Paginator(consulta.order_by('-instante', 'origem', '-chave'), 30).get_page(numero_pagina)
@@ -43,7 +43,9 @@ def linha_do_tempo(despesa, documentos, numero_pagina):
             descricao = f"Anexo · versão {item['numero_versao']} · {descricao}"
         elif item['origem'] == 'conferencia':
             descricao = f"{rotulos.get(item['conferencia'], item['conferencia'])} · {descricao}"
-        linhas.append({'data': item['instante'], 'descricao': descricao, 'usuario': item['usuario'],
-                       'estado': item['dados'], 'url': reverse('documentos:detalhe', args=[item['documento_uuid']]) if item['documento_uuid'] else None})
+        url = reverse('documentos:detalhe', args=[item['documento_uuid']]) if item['documento_uuid'] else None
+        linhas.append({
+            'data': item['instante'], 'descricao': descricao, 'usuario': item['usuario'], 'estado': item['dados'], 'url': url,
+        })
     pagina.object_list = linhas
     return pagina
