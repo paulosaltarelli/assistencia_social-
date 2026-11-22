@@ -1,0 +1,7 @@
+{% extends "app_shell.html" %}
+{% load static %}
+{% block title %}{{ titulo }} · Gestão Social Municipal{% endblock %}
+{% block estilos %}<link rel="stylesheet" href="{% static 'financeiro/financeiro.css' %}">{% endblock %}
+{% block conteudo %}
+<div class="fin">{% block corpo %}{% endblock %}</div>
+{% endblock %}

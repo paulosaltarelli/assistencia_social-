@@ -1,0 +1,37 @@
+{% extends "financeiro/base.html" %}{% load financas %}{% block corpo %}
+<h1>{{ titulo }}</h1>
+<nav class="acoes" aria-label="Financeiro">
+{% if pode_ver %}<a href="{% url 'financeiro:central' %}">Central de despesas</a>{% endif %}
+{% if edita %}<a href="{% url 'financeiro:nova_despesa' %}">Registrar despesa</a>{% endif %}
+{% if pode_gestao and not gestor %}<a href="{% url 'financeiro:gestor' %}">Painel do gestor</a>{% endif %}
+{% if gestor %}<a href="{% url 'financeiro:auditoria' %}">Auditoria financeira</a>{% if documentos %}<a href="{% url 'documentos:prestacao' %}">Arquivo de prestação de contas</a>{% endif %}{% if pode_relatorios %}<a href="{% url 'relatorios:inicio' %}">Relatórios</a>{% endif %}{% endif %}
+</nav>
+<section><h2>Período e classificação</h2>
+<form method="get">{% include "financeiro/campos.html" with form=filtros %}
+<div class="acoes"><label for="grupo">Agrupar execução por</label><select name="grupo" id="grupo"><option value="fonte">Fonte</option><option value="fundo" {% if grupo == 'fundo' %}selected{% endif %}>Fundo</option><option value="programa" {% if grupo == 'programa' %}selected{% endif %}>Programa</option><option value="mes" {% if grupo == 'mes' %}selected{% endif %}>Mês</option></select><button>Aplicar filtros</button><a href="{{ request.path }}">Limpar</a></div></form>
+<small>Os valores acumulam as operações até o fim do mês selecionado, no exercício da dotação.</small></section>
+{% if resumo %}
+<section><h2>Orçamento</h2><div class="grade">
+<article>Orçamento inicial<strong>{{ resumo.orcamento_inicial|reais }}</strong></article>
+<article>Orçamento atualizado<strong>{{ resumo.orcamento_atualizado|reais }}</strong></article>
+<article>Saldo orçamentário<strong>{{ resumo.saldo_orcamentario|reais }}</strong><small>Atualizado menos empenhos</small></article>
+<article>Execução por empenho<strong>{{ resumo.execucao_percentual|floatformat:1 }}%</strong></article></div></section>
+<section><h2>Receitas e caixa</h2><div class="grade">
+<article>Saldo de abertura<strong>{{ resumo.saldo_inicial|reais }}</strong></article>
+<article>Receitas previstas<strong>{{ resumo.previsto|reais }}</strong></article>
+<article>Recebido<strong>{{ resumo.recebido|reais }}</strong></article>
+<article>Saldo financeiro<strong>{{ resumo.saldo_financeiro|reais }}</strong><small>Abertura + recebimentos − pagamentos</small></article></div></section>
+{% if gestor %}<section><h2>Recebimentos por origem</h2><div class="grade">{% for nome, valor in recursos %}<article>{{ nome }}<strong>{{ valor|reais }}</strong></article>{% endfor %}</div></section>{% endif %}
+<section><h2>Execução da despesa</h2><div class="grade">
+<article>Compromissos em aberto<strong>{{ resumo.comprometido|reais }}</strong></article>
+<article>Empenhado<strong>{{ resumo.empenhado|reais }}</strong></article>
+<article>Liquidado<strong>{{ resumo.liquidado|reais }}</strong></article>
+<article>Pago<strong>{{ resumo.pago|reais }}</strong></article></div></section>
+<section><h2>Execução por {{ grupo|capfirst }}</h2>
+{% if quadro %}<div class="tabela"><table><thead><tr><th>{{ grupo|capfirst }}</th><th>Recebido</th><th>Empenhado</th><th>Liquidado</th><th>Pago</th></tr></thead><tbody>
+{% for row in quadro %}<tr><th>{{ row.rotulo }}</th><td>{{ row.recebido|reais }}</td><td>{{ row.empenho|reais }}</td><td>{{ row.liquidacao|reais }}</td><td class="moeda">{{ row.pagamento|reais }} <meter min="0" max="100" value="{{ row.percentual_pago }}" aria-label="Valor pago em proporção ao maior grupo"></meter></td></tr>{% endfor %}
+</tbody></table></div>{% else %}<p class="sem">Nenhuma execução no recorte selecionado.</p>{% endif %}</section>
+{% if gestor %}<section><h2>Conferência</h2><div class="grade"><article><a href="{% url 'financeiro:central' %}?{{ filtros.data.urlencode }}&amp;conferencia=pendente">Despesas com conferência contábil pendente</a><strong>{{ pendentes }}</strong></article>{% if documentos %}<article>Notas fiscais<strong>{{ documentos.notas }}</strong></article><article>Documentos pendentes<strong>{{ documentos.documentos_pendentes }}</strong></article><article>Despesas sem anexos<strong>{{ documentos.despesas_sem_documentos }}</strong></article>{% endif %}</div></section>{% endif %}
+{% endif %}
+{% if pode_ver %}<section><h2>Cadastros e movimentações</h2><div class="lista-links">{% for chave,nome in cadastros %}<a href="{% url 'financeiro:cadastro' chave %}">{{ nome }}</a>{% endfor %}</div></section>{% endif %}
+{% endblock %}

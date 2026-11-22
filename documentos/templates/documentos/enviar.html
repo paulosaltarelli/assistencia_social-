@@ -1,0 +1,12 @@
+{% extends "app_shell.html" %}
+{% block conteudo %}
+<div class="page-header"><div><h1>{{ titulo }}</h1><p>{{ rotulo }} · {{ origem.descricao|default:origem.pk }}</p></div></div>
+<p><a href="{% url 'documentos:vinculo' alvo origem.pk %}">Voltar aos documentos do processo</a></p>
+<form class="panel panel-body" method="post" enctype="multipart/form-data">{% csrf_token %}
+{{ form.non_field_errors }}{% for campo in form.hidden_fields %}{{ campo }}{{ campo.errors }}{% endfor %}
+<div class="form-grid">{% for campo in form.visible_fields %}{% if campo.name == "categoria" or campo.name == "arquivo" or campo.name == "observacao" or campo.name == "vencimento" or campo.name == "sigilo_tecnico" %}<div class="field">{{ campo.as_field_group }}</div>{% endif %}{% endfor %}</div>
+<details {% if form.categoria.value == "nota" or form.errors %}open{% endif %}><summary>Identificação fiscal e referências</summary><fieldset><legend>Dados da nota e do processo</legend>
+<p>Para nota fiscal, informe número, data de emissão, CNPJ, razão social e valor.</p>
+<div class="form-grid">{% for campo in form.visible_fields %}{% if campo.name != "categoria" and campo.name != "arquivo" and campo.name != "observacao" and campo.name != "vencimento" and campo.name != "sigilo_tecnico" %}<div class="field">{{ campo.as_field_group }}</div>{% endif %}{% endfor %}</div></fieldset></details>
+<div class="form-actions"><button type="submit">{% if documento %}Anexar nova versão{% else %}Anexar documento{% endif %}</button></div></form>
+{% endblock %}

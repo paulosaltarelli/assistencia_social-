@@ -1,0 +1,4 @@
+{% extends "app_shell.html" %}
+{% block conteudo %}<h1>Conferir versão {{ versao.sequencia }}</h1><p><a href="{% url 'documentos:detalhe' versao.documento_id %}">Voltar ao documento</a></p>
+<form method="post" class="panel panel-body">{% csrf_token %}{{ form.non_field_errors }}<div class="form-grid">{% for campo in form %}<div class="field">{{ campo.as_field_group }}</div>{% endfor %}</div>
+<div class="form-actions"><button>Registrar conferência</button></div></form>{% endblock %}

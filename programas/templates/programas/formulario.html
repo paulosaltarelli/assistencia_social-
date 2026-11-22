@@ -1,0 +1,2 @@
+{% extends "app_shell.html" %}
+{% block conteudo %}<h1>{{ titulo }}</h1><section class="panel"><form method="post" class="panel-body">{% csrf_token %}{{ form.as_p }}<button type="submit">Salvar</button></form></section>{% endblock %}

@@ -1,0 +1,11 @@
+{% extends "app_shell.html" %}
+{% block conteudo %}
+<div class="page-header"><div><h1>Arquivo de prestação de contas</h1><p>Selecione as despesas para gerar o índice e reunir os originais com seu histórico de versões.</p></div></div>
+<form method="get" class="panel panel-body">{{ form.non_field_errors }}<div class="form-grid">{% for campo in form %}<div class="field">{{ campo.as_field_group }}</div>{% endfor %}</div>
+<div class="form-actions"><button>Filtrar</button></div></form>
+{% if despesas %}<section class="panel"><div class="section-head"><h2>Documentos das despesas</h2><p>{{ despesas }} despesa{{ despesas|pluralize }} na seleção.</p></div>{% if pagina %}<div class="table-wrap"><table>
+<thead><tr><th scope="col">Documento</th><th scope="col">Despesa</th><th scope="col">Versão atual</th></tr></thead><tbody>{% for v in pagina %}<tr><td><a href="{% url 'documentos:detalhe' v.documento_id %}">{{ v.nome }}</a></td><td>{{ v.documento.despesa.descricao }}</td><td>{{ v.sequencia }}</td></tr>{% endfor %}</tbody></table></div>{% include "documentos/paginacao.html" %}
+{% else %}<p class="panel-body">Ainda não há anexos autorizados para essas despesas. Os lançamentos disponíveis constam do índice.</p>{% endif %}
+<form class="panel-body" method="post">{% csrf_token %}{% for campo in form %}{{ campo.as_hidden }}{% endfor %}<button name="formato" value="pdf">Baixar índice PDF</button> <button name="formato" value="zip" class="secondary">Baixar pacote com originais</button></form>
+</section>{% else %}<p>Nenhuma despesa disponível para a seleção.</p>{% endif %}
+{% endblock %}

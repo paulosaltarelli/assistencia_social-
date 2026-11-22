@@ -1,0 +1,53 @@
+.fin section {
+  background: var(--branco);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: clamp(15px, 2vw, 25px);
+  margin: 16px 0;
+  min-width: 0;
+}
+.fin h2 { margin-bottom: 14px; }
+.fin .grade, .fin .acoes, .fin .lista-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+.fin .acoes { margin: 12px 0; }
+.fin .acoes a, .fin .voltar { font-weight: 600; }
+.fin .voltar { display: inline-block; margin-bottom: 12px; }
+.fin .grade article {
+  border-left: 3px solid var(--verde);
+  padding: 4px 12px;
+  flex: 1 1 150px;
+  color: var(--muted);
+}
+.fin .grade article > strong {
+  color: var(--ink);
+  display: block;
+  font-size: 1.35rem;
+  font-variant-numeric: tabular-nums;
+}
+.fin .campos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr));
+  gap: 14px;
+}
+.fin .campos + .campos { margin-top: 14px; }
+.fin .campos input:not([type=checkbox]), .fin .campos select, .fin .campos textarea { width: 100%; }
+.fin #grupo { width: auto; }
+.fin .tabela { overflow: auto; }
+.fin table { min-width: 440px; }
+.fin .moeda { white-space: nowrap; }
+.fin meter { width: 72px; }
+.fin .sem, .fin small { color: var(--muted); }
+.fin dl { display: grid; grid-template-columns: max-content 1fr; gap: 4px 16px; }
+.fin dd { margin: 0; }
+.fin details { margin-top: 8px; }
+.fin details summary { cursor: pointer; }
+.fin .lista-links { gap: 12px 22px; }
+@media (max-width: 600px) {
+  .fin dl { display: block; }
+  .fin dt { font-weight: 600; }
+  .fin dd { margin-bottom: 8px; }
+}

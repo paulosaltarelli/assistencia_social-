@@ -1,0 +1,3 @@
+{% extends "financeiro/base.html" %}{% block corpo %}
+<a class="voltar" href="{% url 'financeiro:gestor' %}">Painel do gestor</a><h1>Auditoria financeira</h1>
+<section><div class="tabela"><table><thead><tr><th>Quando</th><th>Operação</th><th>Registro</th><th>Responsável</th></tr></thead><tbody>{% for item in pagina %}<tr><td>{{ item.criado_em|date:"d/m/Y H:i" }}</td><td>{{ item.evento }}</td><td>{{ item.entidade }} · {{ item.objeto }}</td><td>{{ item.responsavel.get_username }}</td></tr>{% empty %}<tr><td colspan="4">Nenhuma movimentação financeira.</td></tr>{% endfor %}</tbody></table></div>{% include "financeiro/paginacao.html" %}</section>{% endblock %}

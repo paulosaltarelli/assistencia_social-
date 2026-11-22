@@ -1,0 +1,10 @@
+{% extends "app_shell.html" %}
+{% block conteudo %}
+<h1>{{ objeto.tipo.nome }}</h1><p><a href="{% url 'programas:beneficios' %}">Voltar aos benefícios</a> · <a href="{% url 'documentos:vinculo' 'beneficio' objeto.pk %}">Documentos da solicitação</a></p>
+<section class="panel"><dl><dt>Protocolo da origem</dt><dd><code>{{ objeto.pk }}</code></dd><dt>Família / cidadão</dt><dd>{{ objeto.familia }} · {{ objeto.cidadao.nome|default:'Solicitação familiar' }}</dd><dt>Situação</dt><dd>{{ objeto.get_situacao_display }}</dd><dt>Solicitado</dt><dd>{{ objeto.quantidade_solicitada }} unidade(s) · R$ {{ objeto.valor_solicitado }}</dd><dt>Aprovado</dt><dd>{{ objeto.quantidade_aprovada }} unidade(s) · R$ {{ objeto.valor_aprovado }}</dd><dt>Datas</dt><dd>Solicitação {{ objeto.solicitado_em|date:'d/m/Y' }} · Concessão {{ objeto.concedido_em|date:'d/m/Y H:i'|default:'—' }} · Entrega {{ objeto.entregue_em|date:'d/m/Y H:i'|default:'—' }}</dd><dt>Responsável</dt><dd>{{ objeto.responsavel.get_full_name|default:objeto.responsavel.username }}</dd><dt>Observações</dt><dd>{{ objeto.observacoes|linebreaksbr|default:'—' }}</dd></dl>
+{% if permite_tecnica %}<h2>Justificativa técnica protegida</h2><p>{{ objeto.justificativa_tecnica|linebreaksbr|default:'Não informada.' }}</p>{% endif %}
+<h2>Regra registrada na solicitação</h2><p>{{ objeto.regra_aplicada.nome }} · {{ objeto.regra_aplicada.vigencia_inicio }} a {{ objeto.regra_aplicada.vigencia_fim|default:'prazo indeterminado' }}</p><p>{{ objeto.regra_aplicada.regra_local|linebreaksbr }}</p></section>
+{% if pode_editar %}<section class="panel"><h2>Análise, decisão e entrega</h2><p>Fundamente a operação. Na entrega, informe o comprovante. Aprovações parciais devem refletir quantidade ou valor inferior ao solicitado.</p><form method="post">{% csrf_token %}{{ form.as_p }}<button>Registrar operação</button></form></section>{% endif %}
+{% if pode_vincular_financeiro %}<p><a class="button secondary" href="{% url 'financeiro:nova_despesa' %}?origem_tipo=beneficio&amp;origem_id={{ objeto.pk }}">Criar despesa vinculada a esta origem</a></p>{% endif %}
+{% include 'programas/historico.html' %}
+{% endblock %}

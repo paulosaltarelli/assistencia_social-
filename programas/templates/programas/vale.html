@@ -1,0 +1,8 @@
+{% extends "app_shell.html" %}
+{% block conteudo %}
+<h1>Vale-Alimentação Municipal</h1><p><a href="{% url 'programas:vales' %}">Voltar às concessões</a> · <a href="{% url 'documentos:vinculo' 'vale' objeto.pk %}">Documentos da concessão</a></p>
+<section class="panel"><dl><dt>Protocolo da origem</dt><dd><code>{{ objeto.pk }}</code></dd><dt>Titular e família</dt><dd>{{ objeto.cidadao.nome }} · {{ objeto.familia }}</dd><dt>Situação</dt><dd>{{ objeto.get_situacao_display }}</dd><dt>Valor / periodicidade</dt><dd>R$ {{ objeto.valor }} · {{ objeto.get_periodicidade_display }}</dd><dt>Solicitação</dt><dd>{{ objeto.solicitado_em|date:'d/m/Y' }}</dd><dt>Inclusão</dt><dd>{{ objeto.incluido_em|date:'d/m/Y H:i'|default:'Aguardando inclusão' }}</dd><dt>Atualizado em</dt><dd>{{ objeto.atualizado_em|date:'d/m/Y H:i' }}</dd></dl></section>
+{% if pode_editar %}<section class="panel"><h2>Atualizar situação e valor</h2><form method="post">{% csrf_token %}{{ form.as_p }}<button>Salvar alteração fundamentada</button></form></section>{% endif %}
+{% if pode_vincular_financeiro %}<p><a class="button secondary" href="{% url 'financeiro:nova_despesa' %}?origem_tipo=vale&amp;origem_id={{ objeto.pk }}">Criar despesa vinculada a esta origem</a></p>{% endif %}
+{% include 'programas/historico.html' %}
+{% endblock %}

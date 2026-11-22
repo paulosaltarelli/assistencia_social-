@@ -1,0 +1,7 @@
+{{ form.non_field_errors }}
+{% for campo in form.hidden_fields %}{{ campo }}{{ campo.errors }}{% endfor %}
+<div class="campos">
+{% for campo in form.visible_fields %}<div>{{ campo.label_tag }}{{ campo }}
+{% if campo.help_text %}<small id="{{ campo.auto_id }}_helptext">{{ campo.help_text }}</small>{% endif %}
+{{ campo.errors }}</div>{% endfor %}
+</div>

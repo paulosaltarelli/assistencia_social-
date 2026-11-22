@@ -1,0 +1,28 @@
+{% extends "app_shell.html" %}
+{% load links_documentais %}
+{% block conteudo %}
+<div class="page-header"><div><h1>{{ atual.nome }}</h1><p>{{ documento.get_categoria_display }} · Versão {{ atual.sequencia }} · {{ estado }}</p></div>
+{% if editar %}<a class="button secondary" href="{% url 'documentos:substituir' documento.pk %}">Anexar nova versão</a>{% endif %}</div>
+<p><a href="{% url 'documentos:vinculo' documento.alvo origem_id %}">Documentos do processo</a></p>
+<section class="panel"><div class="panel-body">
+<a class="button" href="{% acesso_original atual.pk 'visualizar' %}" target="_blank" rel="noopener noreferrer">Visualizar original</a>
+<a class="button secondary" href="{% acesso_original atual.pk 'baixar' %}">Baixar original</a>
+{% if documento.categoria == "nota" %}<dl><dt>Nota fiscal</dt><dd>{{ atual.numero_nota }} · Série {{ atual.serie_nota|default:"—" }} · Emissão {{ atual.data_emissao|date:"d/m/Y" }}</dd>
+<dt>Emitente</dt><dd>{{ atual.razao_social }} · {{ atual.cnpj_emissor }}</dd><dt>Valor</dt><dd>R$ {{ atual.valor_nota|floatformat:2 }}</dd>
+{% if atual.chave_nfe %}<dt>Chave de acesso</dt><dd style="overflow-wrap:anywhere">{{ atual.chave_nfe }}</dd>{% endif %}
+{% if atual.descricao_itens %}<dt>Produtos e serviços</dt><dd>{{ atual.descricao_itens }}</dd>{% endif %}</dl>{% endif %}
+{% if atual.processo_referencia %}<p>Processo {{ atual.processo_referencia }}</p>{% endif %}
+{% if atual.empenho_referencia %}<p>Empenho {{ atual.empenho_referencia }}</p>{% endif %}
+{% if documento.despesa_id %}<p>{{ documento.despesa.dotacao.fundo.nome }} · {{ documento.despesa.dotacao.fonte.nome }} · {{ documento.despesa.dotacao.programa.nome }}</p>{% endif %}
+{% if similares %}<div class="notice"><strong>Possível duplicidade fiscal</strong><p>Confira as notas com a mesma chave ou combinação de emitente, número, série e valor.</p><ul>{% for similar in similares %}<li><a href="{% url 'documentos:detalhe' similar.documento_id %}">{{ similar.nome }}</a></li>{% endfor %}</ul></div>{% endif %}
+</div></section>
+<section class="panel"><div class="section-head"><h2>Versões e conferências</h2></div><div class="panel-body">
+{% for v in versoes %}<article><h3>Versão {{ v.sequencia }} · {{ v.nome }}</h3><p>{{ v.criado_em|date:"d/m/Y H:i" }} · {{ v.responsavel.get_username }} · {{ v.tamanho|filesizeformat }}</p>
+{% if v.observacao %}<p>{{ v.observacao }}</p>{% endif %}
+<p><a href="{% acesso_original v.pk 'baixar' %}">Baixar versão {{ v.sequencia }}</a></p>
+<details><summary>Identificação do original</summary><code style="overflow-wrap:anywhere">SHA-256 {{ v.sha256 }}</code></details>
+<ul>{% for c in v.conferencias.all %}<li>{{ c.criado_em|date:"d/m/Y H:i" }} · {{ c.get_situacao_display }} · {{ c.responsavel.get_username }}{% if c.motivo %} · {{ c.motivo }}{% endif %}{% if c.providencia %} · {{ c.providencia }}{% endif %}{% if c.observacao %} · {{ c.observacao }}{% endif %}</li>{% endfor %}</ul></article>{% endfor %}</div></section>
+{% if editar %}<section class="panel"><div class="section-head"><h2>Conferir versão {{ atual.sequencia }}</h2></div>
+<form class="panel-body" action="{% url 'documentos:conferir' atual.pk %}" method="post">{% csrf_token %}<div class="form-grid">{% for campo in conferencia %}<div class="field">{{ campo.as_field_group }}</div>{% endfor %}</div>
+<div class="form-actions"><button>Registrar conferência</button></div></form></section>{% endif %}
+{% endblock %}

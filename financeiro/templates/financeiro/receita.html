@@ -1,0 +1,28 @@
+{% extends "financeiro/base.html" %}{% load financas %}
+{% block corpo %}
+<a class="voltar" href="{% url 'financeiro:cadastro' 'receitas' %}">Receitas e transferências</a>
+<h1>{{ titulo }}</h1>
+<section>
+  <h2>{{ receita.valor|reais }}</h2>
+  <dl>
+    <dt>Data</dt><dd>{{ receita.data|date:"d/m/Y" }}</dd>
+    <dt>Instituição de origem</dt><dd>{{ receita.origem }}</dd>
+    <dt>Documento</dt><dd>{{ receita.documento }}</dd>
+    <dt>Exercício e dotação</dt><dd>{{ receita.dotacao.exercicio }} · {{ receita.dotacao.codigo }}</dd>
+    <dt>Fonte</dt><dd>{{ receita.dotacao.fonte }}</dd>
+    <dt>Fundo</dt><dd>{{ receita.dotacao.fundo }}</dd>
+    <dt>Programa</dt><dd>{{ receita.dotacao.programa }}</dd>
+    <dt>Registrado por</dt><dd>{{ receita.responsavel.get_username }}</dd>
+  </dl>
+</section>
+<section>
+  <h2>Comprovantes</h2>
+  {% if receita.comprovante %}<p>{{ receita.comprovante }}</p>{% endif %}
+  {% if documentos %}
+    <nav class="acoes" aria-label="Comprovantes da receita">
+      <a href="{% url 'documentos:vinculo' 'receita' receita.pk %}">Consultar documentos</a>
+      {% if anexa %}<a href="{% url 'documentos:anexar' 'receita' receita.pk %}">Anexar comprovante</a>{% endif %}
+    </nav>
+  {% endif %}
+</section>
+{% endblock %}

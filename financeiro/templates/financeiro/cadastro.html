@@ -1,0 +1,13 @@
+{% extends "financeiro/base.html" %}{% load financas %}{% block corpo %}
+<a class="voltar" href="{% url 'financeiro:inicio' %}">Financeiro</a><h1>{{ titulo }}</h1>
+{% if edita %}<section><details {% if form.errors %}open{% endif %}><summary>Novo registro</summary><form method="post">{% csrf_token %}{% include "financeiro/campos.html" %}<div class="acoes"><button>Salvar registro</button></div></form></details></section>{% endif %}
+<section><h2>Registros ({{ pagina.paginator.count }})</h2>
+{% if pagina %}<div class="tabela"><table>
+{% if tipo == 'exercicios' %}<thead><tr><th>Exercício</th><th>Responsável</th></tr></thead><tbody>{% for r in pagina %}<tr><td>{{ r.ano }}</td><td>{{ r.responsavel.get_username }}</td></tr>{% endfor %}
+{% elif tipo == 'dotacoes' %}<thead><tr><th>Exercício / código</th><th>Classificação</th><th>Orçamento inicial</th><th>Caixa de abertura</th></tr></thead><tbody>{% for r in pagina %}<tr><td>{{ r.exercicio }} · {{ r.codigo }}</td><td>{{ r.fundo.nome }} / {{ r.fonte.nome }} / {{ r.programa.nome }} / {{ r.natureza.nome }}</td><td>{{ r.valor_inicial|reais }}</td><td>{{ r.saldo_inicial|reais }}</td></tr>{% endfor %}
+{% elif tipo == 'revisoes' or tipo == 'receitas' %}<thead><tr><th>Data</th><th>Operação</th><th>Dotação</th><th>Documento</th><th>Valor</th></tr></thead><tbody>{% for r in pagina %}<tr><td>{{ r.data|date:"d/m/Y" }}</td><td>{{ r.get_tipo_display }}</td><td>{{ r.dotacao }}</td><td>{% if tipo == 'receitas' %}<a href="{% url 'financeiro:receita' r.pk %}">{{ r.documento }}</a>{% else %}{{ r.documento }}{% endif %}</td><td>{{ r.valor|reais }}</td></tr>{% endfor %}
+{% elif tipo == 'compromissos' %}<thead><tr><th>Referência / descrição</th><th>Dotação</th><th>Vencimento</th><th>Valor previsto</th><th>Situação</th></tr></thead><tbody>{% for r in pagina %}<tr><td>{{ r.referencia }} · {{ r.descricao }}</td><td>{{ r.dotacao }}</td><td>{{ r.vencimento|date:"d/m/Y" }}</td><td>{{ r.valor|reais }}</td><td>{{ r.get_situacao_display }}{% if edita and not r.finalizado_em %}<br><a href="{% url 'financeiro:situacao_compromisso' r.pk %}">Atualizar</a>{% endif %}</td></tr>{% endfor %}
+{% else %}<thead><tr><th>Código</th><th>Nome</th>{% if tipo == 'fontes' %}<th>Origem</th><th>Finalidade e restrições</th>{% endif %}<th>Situação</th></tr></thead><tbody>{% for r in pagina %}<tr><td>{{ r.codigo }}</td><td>{{ r.nome }}</td>{% if tipo == 'fontes' %}<td>{{ r.get_origem_display }}</td><td>{{ r.finalidade }} {{ r.restricoes }}</td>{% endif %}<td>{{ r.ativa|yesno:"Em uso,Inativa" }}</td></tr>{% endfor %}
+{% endif %}</tbody></table></div>
+{% else %}<p class="sem">Nenhum registro neste município.</p>{% endif %}{% include "financeiro/paginacao.html" %}</section>
+{% endblock %}
