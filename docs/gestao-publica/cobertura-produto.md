@@ -1,5 +1,25 @@
 # Cobertura do produto e critérios de aceite
 
+## Resultado da publicação da demonstração
+
+Em 22 de novembro de 2026, a Vexo publicou a revisão `294dbe7` para a homologação de Santa Cruz de Minas. O acesso pelo IP usa HTTPS na porta 8447. Na Hostinger, o login com origem do navegador abriu o painel com os seis gráficos. Foram verificadas 18 páginas autenticadas e as exportações em PDF e Excel. O pacote de prestação de contas listou 36 despesas e 48 versões de documentos financeiros, com SHA-256 conferido para cada original exportado.
+
+| Indicador do cenário fictício de 12 meses | Quantidade na Hostinger |
+|---|---:|
+| Famílias e pessoas | 80 e 280 |
+| Atendimentos, incluindo os técnicos restritos | 348 |
+| Atendimentos visíveis à conta de gestor da demonstração | 311 |
+| Solicitações de benefícios e pedidos de material | 72 e 36 |
+| Registros de Vale-Alimentação | 60, dos quais 12 ativos |
+| Receitas e despesas | 72 e 36 |
+| Documentos e versões arquivadas em todos os módulos | 81 e 95 |
+
+A segunda execução da carga criou zero registros. O autor da carga é uma conta de demonstração inativa, sem senha utilizável. Os exemplos identificam os registros como simulados e deixam CPF, NIS e telefone em branco. A busca municipal por identificador e o bloqueio de duplicações foram exercitados em desenvolvimento.
+
+As 18 migrações foram ensaiadas em uma cópia restaurada de um backup cifrado antes da autorização e da aplicação na base publicada. Uma segunda restauração, já com a base povoada, reproduziu as contagens e os 95 hashes de originais. A aplicação executa com a role PostgreSQL `social_app`, sem superusuário e sem privilégio para ignorar RLS. O web, PostgreSQL e ClamAV passaram pelos health checks da versão publicada. A suíte integrada na nuvem passou em 91 testes Django e 9 testes do acervo jurídico. Os testes de navegador cobriram o login e telas de gestor, assistência e almoxarifado, inclusive em celular.
+
+A Prefeitura ainda precisa validar os critérios locais e os fluxos para uso com dados reais. O acesso a bases governamentais, o fornecedor de CPF Light e o acervo integral de legislação exigem confirmação e fontes oficiais. A recuperação por e-mail depende de SMTP institucional. O backup diário cifrado funciona na VPS. O armazenamento externo durável e a custódia da chave precisam de destino autorizado.
+
 ## Referência e estado desta revisão
 
 A referência desta matriz é o PDF `prompt_completo_gestao_social_municipal_lovable.pdf` fornecido pelo cliente, organizado em 18 partes. A implementação usa Django e PostgreSQL na infraestrutura autorizada. As menções a Supabase no PDF devem ser avaliadas pelo comportamento esperado de autenticação, persistência e armazenamento privado. O código desta integração usa os componentes do projeto.
