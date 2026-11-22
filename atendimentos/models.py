@@ -10,7 +10,17 @@ class Municipio(models.Model):
 class Vinculo(models.Model):
     usuario = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     municipio = models.ForeignKey(Municipio, on_delete=models.PROTECT)
-    perfil = models.CharField(max_length=10, choices=[("tecnico", "Técnico"), ("auditor", "Auditor"), ("gestor", "Gestor")])
+    perfil = models.CharField(
+        max_length=20,
+        choices=[
+            ("administrador", "Administrador"), ("gestor", "Gestor"),
+            ("coordenador", "Coordenador"), ("assistente", "Assistente social"),
+            ("psicologo", "Psicólogo"), ("atendente", "Atendente"),
+            ("almoxarifado", "Almoxarifado"), ("financeiro", "Financeiro"),
+            ("consulta", "Consulta"), ("tecnico", "Técnico (legado)"),
+            ("auditor", "Auditor (legado)"),
+        ],
+    )
 
 
 class Atendimento(models.Model):

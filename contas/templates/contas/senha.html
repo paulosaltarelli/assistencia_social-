@@ -1,0 +1,1 @@
+{% extends "app_shell.html" %}{% block conteudo %}<header class="page-heading"><h1>Alterar minha senha</h1></header><section class="card"><form method="post">{% csrf_token %}{{ form.as_p }}<button class="button">Alterar senha e encerrar outras sessões</button></form></section>{% endblock %}

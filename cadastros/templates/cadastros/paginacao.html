@@ -1,0 +1,3 @@
+{% if pagina.paginator.count %}<nav class="cd-pagination" aria-label="{{ rotulo|default:'Paginação' }}">
+{% if pagina.has_previous %}<a href="{% querystring page=pagina.previous_page_number %}">Anterior</a>{% endif %}<span>Página {{ pagina.number }} de {{ pagina.paginator.num_pages }} · {{ pagina.paginator.count }} registro{{ pagina.paginator.count|pluralize }}</span>{% if pagina.has_next %}<a href="{% querystring page=pagina.next_page_number %}">Próxima</a>{% endif %}
+</nav>{% endif %}

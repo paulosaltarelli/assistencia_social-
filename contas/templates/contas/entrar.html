@@ -1,0 +1,11 @@
+{% extends "contas/base_publica.html" %}
+{% block title %}Acesso profissional · Gestão Social Municipal{% endblock %}
+{% block conteudo %}
+<div class="public-heading"><p class="eyebrow">Área da secretaria</p><h1>Acesso profissional</h1><p>Entre com as credenciais da sua conta.</p></div>
+{% for message in messages %}<div class="notice {{ message.tags }}" role="status">{{ message }}</div>{% endfor %}
+{% if limitado %}<div class="notice warning" role="alert">Aguarde alguns minutos antes de tentar novamente.</div>{% endif %}
+<form method="post" class="login-form">{% csrf_token %}{% if form.non_field_errors %}<div class="form-errors" role="alert">{{ form.non_field_errors }}</div>{% endif %}
+{% for field in form %}<div class="public-field"><label for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}{% if field.help_text %}<span class="helptext" id="{{ field.auto_id }}_helptext">{{ field.help_text }}</span>{% endif %}{% if field.errors %}<div class="field-error" id="{{ field.auto_id }}_error">{{ field.errors }}</div>{% endif %}</div>{% endfor %}
+{% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}<button type="submit">Entrar no sistema <span aria-hidden="true">→</span></button></form>
+<p class="recover-link"><a href="{% url 'contas:recuperar' %}">Preciso recuperar meu acesso</a></p><p class="access-note">Acesso restrito a profissionais autorizados.</p>
+{% endblock %}
