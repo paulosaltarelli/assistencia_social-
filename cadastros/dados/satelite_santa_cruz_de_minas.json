@@ -48,7 +48,10 @@
     "nuvens_sombras_neve_no_municipio_scl_percentual": 0.0,
     "sem_dados_saturados_no_municipio_scl_percentual": 0.0,
     "pixels_pretos_no_recorte_percentual": 0.0,
-    "pixel_std_rgb": 31.6983
+    "pixel_std_rgb": 31.6983,
+    "nuvens_sombras_neve_no_retangulo_scl_percentual": 0.059,
+    "sem_dados_saturados_no_retangulo_scl_percentual": 0.0,
+    "inspecao_visual": "JPEG aberto e inspecionado após reprojeção: superfície real, sem faixas vazias, norte no topo."
   },
   "artefatos_origem": [
     {
