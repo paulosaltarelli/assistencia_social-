@@ -68,6 +68,10 @@
   function atualizarEscala(maximo) {
     if (!escalaElemento) return;
     escalaElemento.replaceChildren();
+    if (!referencias.some(item => (item[metrica] || 0) > 0)) {
+      escalaElemento.textContent = "Círculos vazios indicam zero registros no indicador selecionado.";
+      return;
+    }
     const valores = [...new Set([1, Math.max(1, Math.round(maximo / 2)), maximo])];
     for (const valor of valores) {
       const item = document.createElement("span");
@@ -82,8 +86,9 @@
   }
 
   function desenhar() {
-    const largura = Math.max(250, canvas.clientWidth);
-    const altura = Math.max(200, canvas.clientHeight);
+    const largura = canvas.clientWidth;
+    const altura = canvas.clientHeight;
+    if (!largura || !altura) return;
     const pixel = window.devicePixelRatio || 1;
     canvas.width = Math.round(largura * pixel);
     canvas.height = Math.round(altura * pixel);
@@ -123,14 +128,12 @@
       contexto.beginPath();
       contexto.arc(alvo.x, alvo.y, alvo.raio, 0, 2 * Math.PI);
       contexto.fillStyle = alvo.valor === 0 ? "#fff" : cor();
-      contexto.globalAlpha = alvo.indice === referenciaSelecionada ? 1 : 0.82;
       contexto.fill();
-      contexto.globalAlpha = 1;
       contexto.lineWidth = alvo.indice === referenciaSelecionada ? 3 : 1.4;
-      contexto.strokeStyle = alvo.indice === referenciaSelecionada ? "#193c54" : "#fff";
+      contexto.strokeStyle = alvo.indice === referenciaSelecionada ? "#193c54" : alvo.valor === 0 ? "#7d8e99" : "#fff";
       contexto.stroke();
       if (alvo.raio >= 8) {
-        contexto.fillStyle = "#fff";
+        contexto.fillStyle = metrica === "atendimentos" ? "#fff" : "#10202a";
         contexto.font = "600 11px system-ui";
         contexto.textAlign = "center";
         contexto.textBaseline = "middle";
