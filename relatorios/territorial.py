@@ -10,12 +10,15 @@ import re
 import unicodedata
 from collections import Counter
 from datetime import date
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 from django.conf import settings
+from django.contrib.staticfiles.finders import find
 from django.db.models import Case, CharField, Count, F, Q, Value, When
 from django.db.models.functions import Coalesce
 from django.utils import timezone
+from django.templatetags.static import static
+from PIL import Image
 
 from atendimentos.models import Atendimento
 from contas.permissoes import permissoes_efetivas
@@ -24,6 +27,91 @@ from programas.models import ConcessaoVale, PedidoMaterial, SolicitacaoBeneficio
 
 DADOS = Path(__file__).resolve().parents[1] / "cadastros" / "dados"
 CATALOGO = DADOS / "catalogo_santa_cruz_de_minas.json"
+VIAS_DADOS = Path(__file__).resolve().parent / "static" / "relatorios" / "geografia"
+
+
+def limites_validos(bounds):
+    if not isinstance(bounds, list) or len(bounds) != 4:
+        return False
+    if any(isinstance(valor, bool) or not isinstance(valor, (float, int)) or not math.isfinite(valor) for valor in bounds):
+        return False
+    oeste, sul, leste, norte = bounds
+    return -180 <= oeste < leste <= 180 and -90 <= sul < norte <= 90
+
+
+def carregar_satelite(codigo, limite_sha256):
+    try:
+        dados = json.loads((DADOS / "satelite_santa_cruz_de_minas.json").read_text(encoding="utf-8"))
+        if str(dados["codigo_ibge"]) != codigo or not limites_validos(dados["bounds"]):
+            return None
+        if dados.get("crs_imagem") != "EPSG:3857" or dados.get("bounds_crs") != "EPSG:4326":
+            return None
+        qualidade = dados.get("qualidade", {})
+        if qualidade.get("cobertura_contorno_referencia") is not True or qualidade.get("limite_referencia_sha256") != limite_sha256:
+            return None
+        arquivo_static = dados["arquivo_static"]
+        caminho = PurePosixPath(arquivo_static)
+        if caminho.is_absolute() or ".." in caminho.parts or caminho.suffix.lower() not in {".jpg", ".jpeg", ".png"}:
+            return None
+        arquivo = find(arquivo_static)
+        if not arquivo or Path(arquivo).stat().st_size > 25_000_000:
+            return None
+        if hashlib.sha256(Path(arquivo).read_bytes()).hexdigest() != dados["sha256"]:
+            return None
+        with Image.open(arquivo) as imagem:
+            if imagem.format not in {"JPEG", "PNG"} or imagem.size != (dados["largura"], dados["altura"]):
+                return None
+            imagem.verify()
+        date.fromisoformat(dados["data_captura"][:10])
+        if not dados.get("credito") or not dados.get("fonte") or not dados.get("url", "").startswith("https://"):
+            return None
+        return {chave: dados[chave] for chave in [
+            "arquivo_static", "bounds", "credito", "fonte", "url", "data_captura", "licenca", "licenca_url",
+            "crs_imagem", "resolucao_origem_metros", "sha256",
+        ]}
+    except (OSError, ValueError, KeyError, TypeError, AttributeError):
+        return None
+
+
+def carregar_vias(codigo, limite_sha256):
+    try:
+        meta = json.loads((VIAS_DADOS / f"{codigo}-vias.origem.json").read_text(encoding="utf-8"))
+        if str(meta["codigo_ibge"]) != codigo or meta.get("sha256_limite") != limite_sha256:
+            return {}
+        arquivo = VIAS_DADOS / f"{codigo}-vias.geojson"
+        if arquivo.stat().st_size > 5_000_000:
+            return {}
+        conteudo = arquivo.read_bytes()
+        if hashlib.sha256(conteudo).hexdigest() != meta["sha256_geojson"]:
+            return {}
+        dados = json.loads(conteudo)
+        if dados.get("type") != "FeatureCollection" or not isinstance(dados.get("features"), list):
+            return {}
+        for feature in dados["features"]:
+            props = feature.get("properties", {})
+            geometria = feature.get("geometry", {})
+            if not isinstance(props, dict) or set(props) - {"nome", "classe"}:
+                return {}
+            if geometria.get("type") not in {"LineString", "MultiLineString"}:
+                return {}
+            linhas = [geometria.get("coordinates")] if geometria["type"] == "LineString" else geometria.get("coordinates")
+            if not isinstance(linhas, list) or not linhas:
+                return {}
+            for linha in linhas:
+                if not isinstance(linha, list) or len(linha) < 2:
+                    return {}
+                for ponto in linha:
+                    if not isinstance(ponto, list) or len(ponto) != 2:
+                        return {}
+                    x, y = ponto
+                    if any(isinstance(n, bool) or not isinstance(n, (int, float)) or not math.isfinite(n) for n in ponto):
+                        return {}
+                    if not -180 <= x <= 180 or not -90 <= y <= 90:
+                        return {}
+        return {"vias_url": static(f"relatorios/geografia/{codigo}-vias.geojson"),
+                "vias_credito": meta["credito"], "vias_fonte": meta["url"]}
+    except (OSError, ValueError, KeyError, TypeError, AttributeError):
+        return {}
 
 
 def normalizar(valor):
@@ -154,6 +242,8 @@ def carregar_malha(municipio):
         referencia = next((item for item in dados.get("fontes", []) if item.get("id") == limite.get("fonte_id")), {})
         return {"geometria": {"type": "FeatureCollection", "features": features}, "fonte": fonte,
                 "referencias": referencias_verificadas(dados, codigo, features),
+                "satelite": carregar_satelite(codigo, limite["sha256"]),
+                **carregar_vias(codigo, limite["sha256"]),
                 "nota_fonte": referencia.get("observacao", ""),
                 "lacuna": "Localidades sem delimitação geográfica conferida permanecem na tabela."}
     except (OSError, ValueError, KeyError, TypeError, AttributeError):

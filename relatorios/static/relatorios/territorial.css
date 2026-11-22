@@ -1,224 +1,70 @@
-.terr-card {
-  margin-block:1.4rem;
+.terr-card { margin-block: 24px; }
+.terr-card .terr-controls { display: flex; gap: 12px; flex-wrap: wrap; margin: 18px 0; }
+.terr-card .terr-toggle { display: flex; align-items: center; justify-content: space-between; gap: 20px; background: #f5f8fb; color: #355268; border: 1px solid #cbd8e2; border-radius: 8px; padding: 13px 16px; text-align: left; font: inherit; font-size: 12px; cursor: pointer; min-width: 220px; }
+.terr-card .terr-toggle strong { font-size: 24px; color: #174e70; font-variant-numeric: tabular-nums; }
+.terr-card .terr-toggle[aria-pressed=true] { background: #eaf5f1; border-color: #268b75; box-shadow: inset 0 0 0 1px #268b75; }
+.terr-card .terr-toggle:focus-visible, .terr-card .terr-locality:focus-visible { outline: 3px solid #2d67b7; outline-offset: 3px; }
+.terr-card .terr-layout { display: grid; grid-template-columns: minmax(0, 1fr); gap: 15px; }
+.terr-card .terr-map { position: relative; margin: 0; background: #f1f5f8; border: 1px solid #d9e4ed; border-radius: 9px; overflow: hidden; }
+.terr-card .terr-leaflet { width: 100%; height: 520px; background: #e8edf0; z-index: 0; }
+.terr-card figcaption { display: grid; gap: 4px; padding: 16px 19px; background: white; border-top: 1px solid #dbe7e6; }
+.terr-card figcaption strong { font-size: 14px; }
+.terr-card figcaption small { color: #627784; font-size: 10px; line-height: 1.6; }
+.terr-card .terr-map-caption { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+.terr-card .terr-fit { background: white; color: #245d83; border: 1px solid #bdcfde; min-height: 32px; padding: 6px 10px; font-size: 11px; }
+.terr-card .terr-fit:hover { background: #edf5fb; }
+.terr-card .terr-tile-status { font-size: 11px; color: #7c5d24; }
+.terr-card .terr-tile-status:empty, .terr-card .terr-image-source:empty { display: none; }
+.terr-card .terr-coverage, .terr-card .terr-image-source { color: #526879; font-size: 11px; line-height: 1.6; }
+.terr-card .terr-explanation { padding: 12px 0; border-top: 1px solid #e3ebf1; }
+.terr-card .terr-explanation > summary { cursor: pointer; color: #345a74; font-size: 12px; font-weight: 600; }
+.terr-card .terr-explanation > p:first-of-type { margin-top: 15px; }
+.terr-card .terr-explanation p, .terr-card .terr-definition p { font-size: 12px; line-height: 1.7; color: #526879; }
+.terr-card .terr-source { font-size: 10px !important; overflow-wrap: anywhere; }
+.terr-card .terr-empty { padding: 18px; background: #f2f6fa; border-radius: 8px; }
+.terr-card .terr-empty p { margin-bottom: 0; }
+.terr-card .terr-definition { margin-block: 16px; padding: 12px 0; border-block: 1px solid #e2e9ef; }
+.terr-card .terr-definition summary { font-weight: 600; font-size: 12px; cursor: pointer; color: #345a74; }
+.terr-card .terr-definition li { font-size: 12px; line-height: 1.8; color: #526879; }
+.terr-card .terr-table-wrap { overflow-x: auto; }
+.terr-card .terr-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.terr-card .terr-table caption { text-align: left; color: #536b7d; padding: 9px 0 15px; }
+.terr-card .terr-table th, .terr-card .terr-table td { text-align: left; padding: 12px 14px; border-bottom: 1px solid #e4ebf0; white-space: normal; }
+.terr-card .terr-table thead th { background: #f5f8fb; color: #4d6376; font-size: 11px; }
+.terr-card .terr-table tbody th { font-weight: 600; color: #27465e; }
+.terr-card .terr-localities { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 7px; }
+.terr-card .terr-locality { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 12px; border: 1px solid #d1dfe7; border-radius: 6px; background: white; color: #23475f; font: inherit; font-size: 12px; cursor: pointer; text-align: left; }
+.terr-card .terr-locality[aria-pressed=true] { border-color: #1e6fac; background: #edf5fc; }
+.terr-card .terr-selection { padding: 11px; border-left: 3px solid #729bad; background: #f1f6f9; }
+.terr-card .terr-scale { font-size: 11px; color: #526879; margin: 12px 0; }
+.terr-card .leaflet-control-layers { font-family: inherit; font-size: 12px; }
+.terr-card .leaflet-control-layers label { display: block; font-size: 12px; font-weight: 400; margin: 0 0 5px; }
+.terr-card .leaflet-control-layers input { width: 15px; height: 15px; min-height: 0; margin: 0 5px 0 0; padding: 0; }
+.terr-card .leaflet-control-layers-expanded { padding: 12px; }
+.terr-card .leaflet-control-attribution { font-size: 9px; max-width: 90%; }
+.terr-card .leaflet-control-attribution a { font-weight: 400; }
+.terr-card .terr-marker { background: none; border: 0; }
+.terr-card .terr-marker-value { display: grid; place-items: center; width: 100%; height: 100%; border: 2px solid white; border-radius: 50%; background: #1768a6; color: white; font: 700 12px/1 system-ui, sans-serif; box-shadow: 0 1px 6px #0e274f88; }
+.terr-card .terr-marker-demand { background: #a85e0b; }
+.terr-card .terr-marker-zero { background: white; border-color: #647a8c; color: #2c495f; }
+.terr-card .terr-popup h3 { font-size: 14px; margin: 0 0 11px; }
+.terr-card .terr-popup dl { display: grid; grid-template-columns: 1fr auto; gap: 7px 14px; margin: 0; }
+.terr-card .terr-popup dt, .terr-card .terr-popup dd { padding: 0; border: 0; margin: 0; font-size: 12px; }
+.terr-card .terr-popup dd { font-weight: 700; }
+.terr-card .terr-popup p { font-size: 10px; line-height: 1.6; color: #526879; margin: 12px 0 0; }
+.terr-card .leaflet-marker-icon:focus-visible { outline: 3px solid #f8c94a; outline-offset: 4px; }
+.terr-card .terr-name-marker { background: none; border: 0; text-align: center; }
+.terr-card .terr-locality-name { display: inline-block; max-width: 150px; padding: 2px 5px; border-radius: 3px; background: #17324de8; border: 1px solid #ffffffb3; color: white; font-size: 10px; font-weight: 600; line-height: 1.35; box-shadow: 0 1px 4px #0005; }
+@media (max-width: 760px) {
+  .terr-card .terr-controls { display: grid; grid-template-columns: 1fr 1fr; }
+  .terr-card .terr-toggle { min-width: 0; flex-direction: column; align-items: flex-start; gap: 6px; }
+  .terr-card .terr-table { min-width: 530px; }
 }
-.terr-card .terr-controls {
-  display:flex;
-  gap:.75rem;
-  flex-wrap:wrap;
-  margin:1rem 0;
+@media (max-width: 660px) {
+  .terr-card .terr-leaflet { height: 380px; }
+  .terr-card figcaption { padding: 15px; }
 }
-.terr-card .terr-toggle {
-  display:flex;
-  align-items:center;
-  gap:1rem;
-  background:#f3f7fa;
-  color:#355268;
-  border:1px solid #cbd8e2;
-  border-radius:10px;
-  padding:.85rem 1rem;
-  text-align:left;
-  font:inherit;
-  cursor:pointer;
-}
-.terr-card .terr-toggle strong {
-  font-size:1.45rem;
-  color:#174e70;
-}
-.terr-card .terr-toggle[aria-pressed=true] {
-  background:#e5f2ef;
-  border-color:#268b75;
-  box-shadow:inset 0 0 0 1px #268b75;
-}
-.terr-card .terr-toggle:focus-visible {
-  outline:3px solid #2d67b7;
-  outline-offset:3px;
-}
-.terr-card .terr-layout {
-  display:grid;
-  grid-template-columns:minmax(0,1.6fr) minmax(200px,1fr);
-  gap:1.5rem;
-}
-.terr-card .terr-map {
-  position:relative;
-  margin:0;
-  background:linear-gradient(140deg,#f2f7f5,#e9f1f3);
-  border:1px solid #dbe7e6;
-  border-radius:12px;
-  overflow:hidden;
-}
-.terr-card canvas {
-  display:block;
-  width:100%;
-  height:340px;
-}
-.terr-card figcaption {
-  display:grid;
-  gap:.2rem;
-  padding:1rem 1.3rem;
-  background:#fff;
-  border-top:1px solid #dbe7e6;
-}
-.terr-card figcaption strong {
-  font-size:1rem;
-}
-.terr-card figcaption small {
-  color:#627784;
-  font-size:.78rem;
-}
-.terr-card .terr-norte {
-  position:absolute;
-  right:1.2rem;
-  top:1rem;
-  font-size:.8rem;
-  font-weight:700;
-  color:#426676;
-}
-.terr-card .terr-explanation {
-  align-self:center;
-}
-.terr-card .terr-explanation h3 {
-  margin-top:0;
-}
-.terr-card .terr-explanation p,.terr-card .terr-definition p {
-  font-size:.9rem;
-  line-height:1.6;
-  color:#526879;
-}
-.terr-card .terr-source {
-  font-size:.78rem!important;
-  overflow-wrap:anywhere;
-}
-.terr-card .terr-empty {
-  padding:1.2rem;
-  background:#f2f6fa;
-  border-radius:10px;
-}
-.terr-card .terr-empty p {
-  margin-bottom:0;
-}
-.terr-card .terr-definition {
-  margin-block:1rem;
-  padding:.85rem 0;
-  border-block:1px solid #e2e9ef;
-}
-.terr-card .terr-definition summary {
-  font-weight:600;
-  cursor:pointer;
-  color:#345a74;
-}
-.terr-card .terr-definition li {
-  font-size:.88rem;
-  line-height:1.8;
-  color:#526879;
-}
-.terr-card .terr-table-wrap {
-  overflow-x:auto;
-}
-.terr-card .terr-table {
-  width:100%;
-  border-collapse:collapse;
-  font-size:.9rem;
-}
-.terr-card .terr-table caption {
-  text-align:left;
-  color:#536b7d;
-  padding:.6rem 0 1rem;
-}
-.terr-card .terr-table th,.terr-card .terr-table td {
-  text-align:left;
-  padding:.8rem 1rem;
-  border-bottom:1px solid #e4ebf0;
-  white-space:normal;
-}
-.terr-card .terr-table thead th {
-  background:#f5f8fb;
-  color:#4d6376;
-  font-size:.78rem;
-}
-.terr-card .terr-table tbody th {
-  font-weight:600;
-  color:#27465e;
-}
-@media(max-width:760px) {
-  .terr-card .terr-layout {
-    grid-template-columns:1fr;
-  }
-  .terr-card canvas {
-    height:280px;
-  }
-  .terr-card .terr-controls {
-    display:grid;
-    grid-template-columns:1fr 1fr;
-  }
-  .terr-card .terr-toggle {
-    flex-direction:column;
-    align-items:flex-start;
-    gap:.4rem;
-    font-size:.85rem;
-  }
-  .terr-card .terr-table {
-    min-width:530px;
-  }
-  .terr-card .terr-explanation {
-    padding:.5rem 0;
-  }
-}
-.terr-card .terr-coverage {
-  color: #526879;
-  font-size: .8rem;
-  line-height: 1.5;
-}
-.terr-card .terr-localities {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: .4rem;
-  max-height: 250px;
-  overflow-y: auto;
-}
-.terr-card .terr-locality {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: .6rem;
-  padding: .6rem .7rem;
-  border: 1px solid #d1dfe7;
-  border-radius: 7px;
-  background: #fff;
-  color: #23475f;
-  font: inherit;
-  font-size: .78rem;
-  cursor: pointer;
-  text-align: left;
-}
-.terr-card .terr-locality[aria-pressed=true] {
-  border-color: #1e6fac;
-  background: #edf5fc;
-}
-.terr-card .terr-locality:focus-visible {
-  outline: 3px solid #2d67b7;
-  outline-offset: 2px;
-}
-.terr-card .terr-selection {
-  padding: .7rem;
-  border-left: 3px solid #729bad;
-  background: #f1f6f9;
-}
-.terr-card .terr-scale {
-  display: flex;
-  align-items: flex-end;
-  gap: 1rem;
-  min-height: 42px;
-  padding: .4rem 0;
-}
-.terr-card .terr-scale span {
-  display: flex;
-  align-items: center;
-  gap: .3rem;
-  color: #526879;
-  font-size: .75rem;
-}
-.terr-card .terr-scale i {
-  display: inline-block;
-  border-radius: 50%;
-  border: 1px solid #356f92;
-}
+.terr-card .terr-street-marker { background: none; border: 0; text-align: center; }
+.terr-card .terr-street-name { display: inline-block; max-width: 150px; padding: 1px 3px; color: #172b3c; background: #fffffff0; border-radius: 2px; font-size: 9px; font-weight: 600; line-height: 1.3; box-shadow: 0 1px 2px #0005; }
+.terr-card .leaflet-control-layers-toggle { width: auto; min-width: 106px; height: 38px; padding: 10px 12px 10px 38px; background-position: 10px center; background-size: 22px 22px; color: #25445e; font: 600 12px/18px system-ui, sans-serif; text-decoration: none; }
+.terr-card .terr-layers-heading { margin-bottom: 9px; font-size: 12px; font-weight: 700; color: #25445e; }

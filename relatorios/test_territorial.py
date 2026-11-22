@@ -5,6 +5,7 @@ from datetime import datetime
 from decimal import Decimal
 from pathlib import Path
 from unittest.mock import patch
+from PIL import Image
 
 from django.contrib.auth import get_user_model
 from django.db import connection
@@ -16,7 +17,7 @@ from django.utils import timezone
 from atendimentos.models import Atendimento, Cidadao, Familia, Municipio, Vinculo
 from cadastros.models import AcompanhamentoAtendimento, ComplementoFamilia
 from programas.models import ConcessaoVale, Material, PedidoMaterial, SolicitacaoBeneficio, TipoBeneficio
-from .territorial import associar_localidades, carregar_malha, coordenadas_validas, ponto_no_contorno, resumo_territorial
+from .territorial import associar_localidades, carregar_malha, carregar_satelite, carregar_vias, coordenadas_validas, ponto_no_contorno, resumo_territorial
 
 
 @override_settings(SOCIAL_MUNICIPIOS_GEOGRAFICOS={})
@@ -181,3 +182,60 @@ class MalhaTerritorialTests(SimpleTestCase):
         self.assertEqual(pontos[0]["demandas"], 1)
         self.assertEqual(pontos[1]["demandas"], 0)
         self.assertEqual(linhas[0]["referencia_mapa"], "")
+
+
+class CamadasLocaisTests(SimpleTestCase):
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp.cleanup)
+        self.pasta = Path(self.temp.name)
+        self.limite_hash = "a" * 64
+
+    def test_satelite_exige_codigo_hash_pixels_e_referencia_do_limite(self):
+        imagem = self.pasta / "fixture.png"
+        Image.new("RGB", (16, 16), color="green").save(imagem)
+        metadados = {"codigo_ibge": "0000001", "bounds": [0, 0, 1, 1], "bounds_crs": "EPSG:4326", "crs_imagem": "EPSG:3857",
+            "arquivo_static": "fixture/satelite.png", "largura": 16, "altura": 16,
+            "sha256": hashlib.sha256(imagem.read_bytes()).hexdigest(), "data_captura": "2026-01-01T00:00:00Z",
+            "credito": "Imagem sintética para teste", "fonte": "Fixture", "url": "https://example.invalid/fixture",
+            "licenca": "Fixture", "licenca_url": "https://example.invalid/licenca", "resolucao_origem_metros": 10,
+            "qualidade": {"cobertura_contorno_referencia": True, "limite_referencia_sha256": self.limite_hash}}
+        arquivo_meta = self.pasta / "satelite_santa_cruz_de_minas.json"
+        arquivo_meta.write_text(json.dumps(metadados), encoding="utf-8")
+        with patch("relatorios.territorial.DADOS", self.pasta), patch("relatorios.territorial.find", return_value=str(imagem)):
+            self.assertIsNotNone(carregar_satelite("0000001", self.limite_hash))
+            self.assertIsNone(carregar_satelite("0000002", self.limite_hash))
+            self.assertIsNone(carregar_satelite("0000001", "b" * 64))
+            metadados["bounds"] = [1, 0, 0, 1]
+            arquivo_meta.write_text(json.dumps(metadados), encoding="utf-8")
+            self.assertIsNone(carregar_satelite("0000001", self.limite_hash))
+            metadados["bounds"] = [0, 0, 1, 1]
+            arquivo_meta.write_text(json.dumps(metadados), encoding="utf-8")
+            imagem.write_bytes(b"conteudo modificado")
+            self.assertIsNone(carregar_satelite("0000001", self.limite_hash))
+
+    def test_vias_exigem_codigo_hash_coordenadas_e_properties_publicas(self):
+        geojson = {"type": "FeatureCollection", "features": [{"type": "Feature", "properties": {"nome": "Via sintética", "classe": "teste"},
+            "geometry": {"type": "LineString", "coordinates": [[0, 0], [1, 1]]}}]}
+        arquivo = self.pasta / "0000001-vias.geojson"
+        meta = {"codigo_ibge": "0000001", "sha256_limite": self.limite_hash,
+                "credito": "Fixture", "url": "https://example.invalid/vias"}
+        arquivo_meta = self.pasta / "0000001-vias.origem.json"
+
+        def salvar():
+            arquivo.write_text(json.dumps(geojson), encoding="utf-8")
+            meta["sha256_geojson"] = hashlib.sha256(arquivo.read_bytes()).hexdigest()
+            arquivo_meta.write_text(json.dumps(meta), encoding="utf-8")
+
+        salvar()
+        with patch("relatorios.territorial.VIAS_DADOS", self.pasta), patch("relatorios.territorial.static", side_effect=lambda nome: "/static/" + nome):
+            self.assertEqual(carregar_vias("0000001", self.limite_hash)["vias_url"], "/static/relatorios/geografia/0000001-vias.geojson")
+            self.assertEqual(carregar_vias("0000002", self.limite_hash), {})
+            self.assertEqual(carregar_vias("0000001", "b" * 64), {})
+            geojson["features"][0]["geometry"]["coordinates"][0] = [999, 0]
+            salvar()
+            self.assertEqual(carregar_vias("0000001", self.limite_hash), {})
+            geojson["features"][0]["geometry"]["coordinates"][0] = [0, 0]
+            geojson["features"][0]["properties"]["campo_inesperado"] = "Fora do contrato de vias públicas"
+            salvar()
+            self.assertEqual(carregar_vias("0000001", self.limite_hash), {})

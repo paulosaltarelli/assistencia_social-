@@ -1,0 +1,28 @@
+{
+  "codigo_ibge": "3157336",
+  "municipio": "Santa Cruz de Minas/MG",
+  "arquivo": "3157336-vias.geojson",
+  "sha256_geojson": "65ad426ca54319a517a4f799408e5ee227eb3a8a54c6add8ba250dbb16c074c2",
+  "fonte": "OpenStreetMap",
+  "url": "https://api.openstreetmap.org/api/0.6/map?bbox=-44.236,-21.129,-44.198,-21.113",
+  "consultado_em": "2026-11-22T12:50:53+00:00",
+  "licenca": "Open Data Commons Open Database License 1.0 (ODbL)",
+  "licenca_url": "https://opendatacommons.org/licenses/odbl/1-0/",
+  "credito": "© OpenStreetMap contributors",
+  "credito_url": "https://www.openstreetmap.org/copyright",
+  "sha256_resposta_osm": "c483340649331313466876c9899225ea209dedc96d0486e41344c86a17c40860",
+  "bbox_consultada": [
+    -44.236,
+    -21.129,
+    -44.198,
+    -21.113
+  ],
+  "referencial": "WGS 84 (RFC 7946), longitude e latitude",
+  "recorte": "Interseção geométrica com o limite municipal identificado no catálogo territorial da aplicação.",
+  "fonte_limite": "https://raw.githubusercontent.com/luizpedone/municipal-brazilian-geodata/e85ba38c0c7d5acda8d8878099a7f321dddefa33/data/MG.json",
+  "sha256_limite": "cd232d7ba62b2ed467deb9c5b40ece672dd895410e36e916d5f0b9b087af6945",
+  "selecionadas": "Linhas mapeadas para deslocamento, com a classificação highway e o nome publicados no OSM quando informado. Excluídas áreas e acessos marcados private ou no.",
+  "elementos_de_via": 143,
+  "elementos_com_nome": 104,
+  "nomes_distintos": 84
+}

@@ -1,0 +1,72 @@
+{
+  "codigo_ibge": "3157336",
+  "municipio": "Santa Cruz de Minas",
+  "uf": "MG",
+  "arquivo_static": "cadastros/satelite_santa_cruz_de_minas.jpg",
+  "bounds": [
+    -44.33,
+    -21.205,
+    -44.105,
+    -21.045
+  ],
+  "bounds_crs": "EPSG:4326",
+  "crs_imagem": "EPSG:3857",
+  "bounds_imagem_3857": [
+    -4934793.026865817,
+    -2416339.5013857274,
+    -4909746.14143733,
+    -2397245.166697797
+  ],
+  "fonte": "Copernicus Sentinel-2 L2A — ESA, Sinergise e Element 84, catálogo Earth Search AWS",
+  "url": "https://earth-search.aws.element84.com/v1/collections/sentinel-2-l2a/items/S2B_23KNS_20260927_0_L2A",
+  "url_imagem_original": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/23/K/NS/2026/9/S2B_23KNS_20260927_0_L2A/TCI.tif",
+  "data_captura": "2026-09-27T13:18:05.765000Z",
+  "credito": "Contains modified Copernicus Sentinel data (2026). Processamento Sinergise/Element 84. Recorte e reprojeção Vexo.",
+  "licenca": "Condições dos dados Sentinel ESA, conforme licença indicada pela coleção STAC",
+  "licenca_url": "https://sentinel.esa.int/documents/247904/690755/Sentinel_Data_Legal_Notice",
+  "licenca_stac_colecao": "proprietary",
+  "stac_item": "S2B_23KNS_20260927_0_L2A",
+  "stac_colecao": "sentinel-2-l2a",
+  "asset": "visual / TCI RGB",
+  "resolucao_origem_metros": 10,
+  "crs_origem": "EPSG:32723",
+  "largura": 2400,
+  "altura": 1830,
+  "sha256": "a3f329fd0d3aeaf1620f6e4e0109ede094f8b134fdc1123fbf17dd29e5f2ddd6",
+  "bytes": 1458483,
+  "consultado_em": "2026-11-22T12:55:46.261800+00:00",
+  "processamento": [
+    "Leitura de dados públicos TCI RGB por HTTPS com TLS verificado.",
+    "Recorte geográfico cobrindo integralmente o contorno municipal de referência.",
+    "Reprojeção UTM EPSG:32723 para retângulo Web Mercator EPSG:3857 com interpolação bilinear.",
+    "Codificação JPEG sem geração ou substituição artificial de elementos da cena."
+  ],
+  "qualidade": {
+    "cobertura_contorno_referencia": true,
+    "limite_referencia_sha256": "cd232d7ba62b2ed467deb9c5b40ece672dd895410e36e916d5f0b9b087af6945",
+    "nuvens_tile_percentual": 2.317346,
+    "nuvens_sombras_neve_no_municipio_scl_percentual": 0.0,
+    "sem_dados_saturados_no_municipio_scl_percentual": 0.0,
+    "pixels_pretos_no_recorte_percentual": 0.0,
+    "pixel_std_rgb": 31.6983
+  },
+  "artefatos_origem": [
+    {
+      "asset": "visual",
+      "url": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/23/K/NS/2026/9/S2B_23KNS_20260927_0_L2A/TCI.tif",
+      "sha256": "b9630b4e6cf0314fa2d64447bc5d52ce46ea4037f928f10262d174cf1bf6a80f",
+      "bytes": 310424643
+    },
+    {
+      "asset": "scl",
+      "url": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/23/K/NS/2026/9/S2B_23KNS_20260927_0_L2A/SCL.tif",
+      "sha256": "258bda429a2b72fd2d25a06981e610fd371a5073146cf60bd0eeddd0537c8e91",
+      "bytes": 3803486
+    }
+  ],
+  "limites": [
+    "Imagem de referência histórica datada, com resolução nativa de 10 m.",
+    "Não permite afirmar limites de bairros ou identificar residência de família.",
+    "Verificação de cobertura usa o contorno municipal secundário documentado no catálogo."
+  ]
+}
