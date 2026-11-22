@@ -1,8 +1,15 @@
 asgiref==3.13.0
+charset-normalizer==3.5.2
+defusedxml==0.7.1
 Django==5.2.19
+et_xmlfile==2.0.0
 gunicorn==27.0.1
+openpyxl==3.1.5
+pillow==12.3.0
 psycopg==3.3.9
 psycopg-binary==3.3.9
+pypdf==7.1.1
+reportlab==5.1.0
 sqlparse==0.6.1
 typing_extensions==4.16.0
 whitenoise==6.12.0

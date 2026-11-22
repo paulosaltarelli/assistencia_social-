@@ -3,3 +3,4 @@ services:
   social-web:
     environment:
       SOCIAL_DEV: "1"
+      SOCIAL_HOMOLOGACAO: "1"

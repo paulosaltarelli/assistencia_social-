@@ -7,5 +7,12 @@ __pycache__/
 *.pem
 *.key
 *.dump
+*.dump.gpg
+*.p12
+*.pfx
+private_key.json
+acme/
+acme-logs/
+acme-work/
 .venv/
 staticfiles/

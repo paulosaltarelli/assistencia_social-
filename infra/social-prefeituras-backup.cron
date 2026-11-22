@@ -1,0 +1,2 @@
+# Horário do sistema da VPS. Execução sem concorrência, exclusiva da base social.
+47 4 * * * root /usr/bin/nice -n 15 /usr/bin/ionice -c 3 /var/lib/social-prefeituras/backup-social.sh

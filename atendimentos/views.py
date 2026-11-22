@@ -3,7 +3,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
 from django.core.cache import cache
-from django.db import connection, transaction
+from django.db import DatabaseError, connection, transaction
 from django.db.models import Q
 from django.utils import timezone
 from django.http import HttpResponse, HttpResponseForbidden
@@ -118,6 +118,14 @@ def painel(request, cadastro=None):
 
 
 def health(request):
-    with connection.cursor() as cursor:
-        cursor.execute("SELECT 1 FROM atendimentos_municipio LIMIT 1")
-    return HttpResponse("ok")
+    try:
+        with connection.cursor() as cursor:
+            # PostgreSQL resolves the tables and privileges without reading municipal records.
+            cursor.execute("""
+                SELECT 1 FROM atendimentos_municipio, contas_secretaria, cadastros_complementopessoa,
+                              programas_concessaovale, financeiro_despesa, documentos_documento
+                WHERE false
+            """)
+    except DatabaseError:
+        return HttpResponse("indisponível", status=503, content_type="text/plain")
+    return HttpResponse("ok", content_type="text/plain")

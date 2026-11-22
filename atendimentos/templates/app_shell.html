@@ -1,0 +1,32 @@
+{% load static %}<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="light"><meta name="referrer" content="same-origin">
+  <title>{% block title %}{{ titulo|default:"Área profissional" }} · Gestão Social Municipal{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'atendimentos/municipal.css' %}">
+  {% block estilos %}{% endblock %}
+</head>
+<body>
+<a class="skip" href="#principal">Ir ao conteúdo</a>
+<div class="municipal-app">
+  <aside class="side">
+    <a class="identity" href="{% url 'painel' %}" aria-label="Gestão Social Municipal, início"><span class="identity-mark" aria-hidden="true">GS</span><span>Gestão Social<small>Municipal</small></span></a>
+    <nav aria-label="Módulos do sistema">{% include "menu_municipal.html" %}</nav>
+    <div class="assinatura">Desenvolvido por <img src="{% static 'atendimentos/vexo.png' %}" alt="Vexo"></div>
+  </aside>
+  <div class="center">
+    <header class="municipal-top">
+      <div class="tenant"><span>{{ orgao_municipal|default:"Assistência Social" }}</span><strong>{{ request.municipio.nome }}</strong></div>
+      <div class="user-actions"><a href="{% url 'contas:senha' %}" class="user" title="Minha conta e alteração de senha"><span class="user-avatar" aria-hidden="true">{{ request.user.username|first|upper }}</span><span>{{ request.user.get_full_name|default:request.user.username }}<small>{{ request.vinculo.get_perfil_display }}</small></span></a><form method="post" action="{% url 'contas:sair' %}">{% csrf_token %}<button class="outline logout" type="submit">Sair</button></form></div>
+    </header>
+    {% if homologacao %}<div class="homologacao-banner" role="note"><strong>Ambiente de homologação</strong><span>Utilize somente dados fictícios para testes e demonstrações.</span></div>{% endif %}
+    <details class="mobile-nav"><summary><span><img src="{% static 'atendimentos/icones/menu.svg' %}" alt="">Menu de módulos</span><span class="menu-state" aria-hidden="true">⌄</span></summary><nav aria-label="Módulos do sistema no celular">{% include "menu_municipal.html" %}</nav></details>
+    <main id="principal" tabindex="-1">
+      {% if messages %}{% for message in messages %}<div class="notice {{ message.tags }}" {% if message.level >= 40 %}role="alert"{% else %}role="status"{% endif %}>{{ message }}</div>{% endfor %}{% endif %}
+      {% block conteudo %}{% endblock %}
+    </main>
+    <footer class="workspace-footer"><span>Gestão Social Municipal</span><span>Desenvolvido por <img src="{% static 'atendimentos/vexo.png' %}" alt="Vexo"></span></footer>
+  </div>
+</div>
+</body>
+</html>

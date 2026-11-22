@@ -1,0 +1,44 @@
+services:
+  social-web:
+    environment:
+      SOCIAL_CLAMAV_HOST: social-antivirus
+      SOCIAL_CLAMAV_PORT: "3310"
+      SOCIAL_CLAMAV_TIMEOUT: "20"
+    networks: [verificacao-documentos]
+  social-antivirus:
+    image: ${SOCIAL_SCANNER_IMAGE:-social-prefeituras-social-antivirus:latest}
+    build: ./documentos/antivirus
+    restart: unless-stopped
+    user: clamav
+    entrypoint: /init-unprivileged
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    environment:
+      CLAMD_STARTUP_TIMEOUT: "300"
+      FRESHCLAM_CHECKS: "4"
+    cpus: 0.45
+    mem_limit: 2048m
+    memswap_limit: 2048m
+    pids_limit: 96
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "3"
+    healthcheck:
+      test: ["CMD", "clamdcheck.sh"]
+      start_period: 120s
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    tmpfs:
+      - /tmp:rw,nosuid,nodev,noexec,size=128m,mode=1777
+      - /var/log/clamav:rw,nosuid,nodev,noexec,size=8m,uid=100,gid=101,mode=0750
+    volumes:
+      - assinaturas-antivirus:/var/lib/clamav
+    networks: [verificacao-documentos]
+networks:
+  verificacao-documentos: {}
+volumes:
+  assinaturas-antivirus: {}

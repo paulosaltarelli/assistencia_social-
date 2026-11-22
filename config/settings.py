@@ -33,6 +33,13 @@ ALLOWED_HOSTS = os.environ.get("SOCIAL_HOSTS", "localhost,127.0.0.1").split(",")
 
 INSTALLED_APPS = [
     'django.contrib.admin',
+    'atendimentos',
+    'contas.apps.ContasConfig',
+    'cadastros',
+    'programas',
+    'financeiro',
+    'documentos',
+    'relatorios',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -45,6 +52,7 @@ MIDDLEWARE = [
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'contas.seguranca_upload.LimitarUploadMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -63,6 +71,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'atendimentos.navegacao.contexto',
             ],
         },
     },
@@ -73,14 +82,6 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -104,9 +105,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'pt-br'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Sao_Paulo'
 
 USE_I18N = True
 
@@ -123,16 +124,14 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-INSTALLED_APPS.append("atendimentos")
 DATABASES = {"default": {
     "ENGINE": "django.db.backends.postgresql",
-    "NAME": "social", "USER": os.environ.get("SOCIAL_DB_USER", "social_app"),
+    "NAME": os.environ.get("SOCIAL_DB_NAME", "social"),
+    "USER": os.environ.get("SOCIAL_DB_USER", "social_app"),
     "PASSWORD": os.environ["SOCIAL_DB_PASSWORD"],
     "HOST": os.environ.get("SOCIAL_DB_HOST", "social-db"),
     "PORT": os.environ.get("SOCIAL_DB_PORT", "5432"),
 }}
-LANGUAGE_CODE = "pt-br"
-TIME_ZONE = "America/Sao_Paulo"
 SESSION_COOKIE_AGE = 1800
 SESSION_SAVE_EVERY_REQUEST = True
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
@@ -145,3 +144,24 @@ LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = LOGIN_URL
 
 STATIC_ROOT = BASE_DIR / "staticfiles"
+
+SOCIAL_CHAVE_INDICE = os.environ.get("SOCIAL_CHAVE_INDICE") or SECRET_KEY
+SOCIAL_MUNICIPIO_PUBLICO = os.environ.get("SOCIAL_MUNICIPIO_PUBLICO", "")
+SOCIAL_HOMOLOGACAO = os.environ.get("SOCIAL_HOMOLOGACAO") == "1"
+CONTAS_SMTP_ATIVO = os.environ.get("CONTAS_SMTP_ATIVO") == "1"
+if CONTAS_SMTP_ATIVO:
+    EMAIL_HOST = os.environ["EMAIL_HOST"]
+    EMAIL_PORT = int(os.environ.get("EMAIL_PORT", "587"))
+    EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "")
+    EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "")
+    EMAIL_USE_TLS = os.environ.get("EMAIL_USE_TLS", "1") == "1"
+    EMAIL_USE_SSL = os.environ.get("EMAIL_USE_SSL") == "1"
+    DEFAULT_FROM_EMAIL = os.environ["DEFAULT_FROM_EMAIL"]
+    EMAIL_TIMEOUT = 10
+SECURE_REFERRER_POLICY = "same-origin"
+FILE_UPLOAD_MAX_MEMORY_SIZE = 1024 * 1024
+FILE_UPLOAD_HANDLERS = [
+    "contas.seguranca_upload.LimitarArquivo",
+    "django.core.files.uploadhandler.MemoryFileUploadHandler",
+    "django.core.files.uploadhandler.TemporaryFileUploadHandler",
+]

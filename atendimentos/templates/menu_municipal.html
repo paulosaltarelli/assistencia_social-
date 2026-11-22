@@ -1,0 +1,1 @@
+{% load static %}{% for grupo, links in menu_municipal %}<div class="nav-group"><div class="nav-title">{{ grupo }}</div>{% for link in links %}<a href="{{ link.url }}"{% if link.ativo %} aria-current="page"{% endif %}><img alt="" src="{% static 'atendimentos/icones/' %}{{ link.icone }}.svg"><span>{{ link.titulo }}</span></a>{% endfor %}</div>{% endfor %}
