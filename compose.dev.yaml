@@ -1,0 +1,5 @@
+name: social-prefeituras-dev
+services:
+  social-web:
+    environment:
+      SOCIAL_DEV: "1"

@@ -1,0 +1,9 @@
+services:
+  social-db:
+    restart: unless-stopped
+  social-web:
+    restart: unless-stopped
+    read_only: true
+    tmpfs: [/tmp]
+    security_opt: [no-new-privileges:true]
+    cap_drop: [ALL]

@@ -1,0 +1,10 @@
+#!/bin/sh
+set -eu
+psql -v ON_ERROR_STOP=1 -U postgres -d social <<'SQL'
+\getenv app_password SOCIAL_DB_PASSWORD
+CREATE ROLE social_app LOGIN PASSWORD :'app_password' NOSUPERUSER NOBYPASSRLS;
+GRANT CONNECT ON DATABASE social TO social_app;
+GRANT USAGE ON SCHEMA public TO social_app;
+ALTER DEFAULT PRIVILEGES FOR ROLE postgres IN SCHEMA public GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO social_app;
+ALTER DEFAULT PRIVILEGES FOR ROLE postgres IN SCHEMA public GRANT USAGE, SELECT ON SEQUENCES TO social_app;
+SQL
