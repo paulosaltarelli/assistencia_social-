@@ -3,7 +3,7 @@ from io import BytesIO
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.core.paginator import Paginator
-from django.db.models import Prefetch
+from django.db.models import F, Prefetch
 from django.http import FileResponse, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -105,7 +105,9 @@ def substituir(request, pk):
 @municipal("documentos.ver")
 def detalhe(request, pk):
     docs = servicos.documentos_autorizados(request)
-    doc = get_object_or_404(docs, pk=pk)
+    doc = get_object_or_404(docs.select_related(
+        "despesa__dotacao__fundo", "despesa__dotacao__fonte", "despesa__dotacao__programa",
+    ), pk=pk)
     historico = Conferencia.objects.select_related("responsavel").order_by("criado_em", "pk")
     versoes = list(servicos.todas_versoes(docs.filter(pk=pk)).prefetch_related(
         Prefetch("conferencias", queryset=historico)).order_by("-sequencia"))
@@ -170,7 +172,6 @@ def prestacao(request):
     if form.is_valid():
         despesas = servicos.despesas_do_arquivo(request.municipio, form.cleaned_data)
         docs = servicos.documentos_autorizados(request).filter(despesa__in=despesas)
-        quantidade = despesas.count()
         if request.method == "POST":
             tipo = request.POST.get("formato")
             if tipo not in ("pdf", "zip"):
@@ -190,7 +191,11 @@ def prestacao(request):
                 registrar_evento(request, "doc.exportar_" + tipo)
                 return FileResponse(arquivo, as_attachment=True, filename="prestacao-de-contas." + tipo,
                                     content_type="application/pdf" if tipo == "pdf" else "application/zip")
-        itens = Paginator(servicos.versoes_atuais(docs), 25).get_page(request.GET.get("pagina"))
+        quantidade = despesas.count()
+        atuais = servicos.versoes_atuais(docs).values(
+            "documento_id", "nome", "mime", "sequencia", descricao_despesa=F("documento__despesa__descricao"),
+        )
+        itens = Paginator(atuais, 25).get_page(request.GET.get("pagina"))
         registrar_evento(request, "doc.prestacao_consulta")
     return pagina(request, "prestacao", {"form": form, "pagina": itens, "despesas": quantidade,
                   "titulo": "Arquivo de prestação de contas"})

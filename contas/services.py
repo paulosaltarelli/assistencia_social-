@@ -49,9 +49,11 @@ def salvar_ajustes(vinculo, permitir, negar, autor):
         del vinculo._permissoes_efetivas
     # As delegações operacionais são preservadas e não são editáveis no formulário.
     AjustePermissao.objects.filter(vinculo=vinculo).exclude(codigo__in=DELEGACOES).delete()
-    for permitido, codigos in [(True, permitir), (False, negar)]:
-        for codigo in codigos:
-            AjustePermissao.objects.create(municipio=vinculo.municipio, vinculo=vinculo, codigo=codigo, permitido=permitido, concedido_por=autor)
+    AjustePermissao.objects.bulk_create([
+        AjustePermissao(municipio_id=vinculo.municipio_id, vinculo=vinculo, codigo=codigo,
+                        permitido=permitido, concedido_por=autor)
+        for permitido, codigos in ((True, permitir), (False, negar)) for codigo in codigos
+    ])
 
 
 def revogar(usuario):

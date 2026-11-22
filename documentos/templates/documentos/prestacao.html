@@ -13,7 +13,7 @@
  <section class="doc-painel">
   <div class="doc-topo"><div><h2>Documentos selecionados</h2><p>{{ despesas }} despesa{{ despesas|pluralize }} · {{ pagina.paginator.count }} documento{{ pagina.paginator.count|pluralize }} autorizado{{ pagina.paginator.count|pluralize }}</p></div></div>
   {% if pagina %}<div class="doc-linhas">{% for v in pagina %}<article class="doc-linha doc-linha-curta">
-   <div class="doc-nome">{% include "documentos/formato.html" with mime=v.mime only %}<div><h3><a href="{% url 'documentos:detalhe' v.documento_id %}">{{ v.nome }}</a></h3><span>{{ v.documento.despesa.descricao }}</span></div></div><span class="doc-ultima">Versão {{ v.sequencia }}</span>
+   <div class="doc-nome">{% include "documentos/formato.html" with mime=v.mime only %}<div><h3><a href="{% url 'documentos:detalhe' v.documento_id %}">{{ v.nome }}</a></h3><span>{{ v.descricao_despesa }}</span></div></div><span class="doc-ultima">Versão {{ v.sequencia }}</span>
    </article>{% endfor %}</div>{% else %}<div class="doc-vazio"><h3>Despesas sem documentos autorizados</h3><p>Os lançamentos dessas despesas constam do índice.</p></div>{% endif %}
   {% include "documentos/paginacao.html" %}
  </section>

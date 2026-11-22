@@ -1,2 +1,2 @@
 {% load financas %}{% if pagina.paginator.num_pages > 1 %}
-<nav class="acoes" aria-label="Paginação">{% if pagina.has_previous %}<a href="{% pagina_url pagina.previous_page_number %}">Anterior</a>{% endif %}<span>Página {{ pagina.number }} de {{ pagina.paginator.num_pages }}</span>{% if pagina.has_next %}<a href="{% pagina_url pagina.next_page_number %}">Próxima</a>{% endif %}</nav>{% endif %}
+<nav class="acoes" aria-label="{{ descricao|default:'Paginação' }}">{% if pagina.has_previous %}<a href="{% pagina_url pagina.previous_page_number parametro %}">Anterior</a>{% endif %}<span>Página {{ pagina.number }} de {{ pagina.paginator.num_pages }}</span>{% if pagina.has_next %}<a href="{% pagina_url pagina.next_page_number parametro %}">Próxima</a>{% endif %}</nav>{% endif %}

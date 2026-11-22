@@ -59,6 +59,21 @@ class CadastrosTests(TestCase):
         self.assertTrue(nova.pk)
         self.assertFalse(nova.complemento.cpf_ultimos)
 
+    def test_edicao_sem_cpf_preserva_documento_inserido_durante_a_edicao(self):
+        complemento = ComplementoPessoa.objects.create(municipio=self.municipio, cidadao=self.pessoa)
+        novo_indice = indice(self.municipio.pk, 'cpf', '52998224725')
+        validar = views.PessoaForm.is_valid
+
+        def validar_apos_preenchimento(form):
+            ComplementoPessoa.objects.filter(pk=complemento.pk).update(cpf_hash=novo_indice, cpf_ultimos='4725')
+            return validar(form)
+
+        request = self.request('post', {'nome': self.pessoa.nome, 'familia_id': str(self.familia.pk)})
+        with patch.object(views.PessoaForm, 'is_valid', validar_apos_preenchimento), patch('cadastros.views.redirect', return_value=HttpResponse(status=302)):
+            self.assertEqual(views.pessoa_form(request, pk=self.pessoa.pk).status_code, 302)
+        complemento.refresh_from_db()
+        self.assertEqual((complemento.cpf_hash, complemento.cpf_ultimos), (novo_indice, '4725'))
+
     def test_familia_outro_municipio_rejeitada(self):
         response = views.pessoa_form(self.request('post', {'nome': 'Inválido', 'familia_id': str(self.familia_b.pk)}))
         self.assertEqual(response.status_code, 200)

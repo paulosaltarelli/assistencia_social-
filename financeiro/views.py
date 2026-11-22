@@ -18,14 +18,15 @@ from .consultas import (data_corte, despesas_filtradas, execucao_por_grupo, filt
                         pendentes_de_conferencia, recursos_por_origem, resumo_despesa, resumo_financeiro)
 from .forms import (CADASTROS, FormConciliacao, FormDespesa, FormEdicao, FormEtapa, FormOrigem,
                     FormSituacao, formulario_cadastro)
+from .historico import linha_do_tempo
 from .models import (Compromisso, Conciliacao, Despesa, Dotacao, Historico, Lancamento,
                      Receita, RevisaoOrcamento, VinculoSocial)
 from .templatetags.financas import reais
 from .servicos import alterar_compromisso, atualizar_despesa, cadastrar, executar_etapa
 
 
-def _pagina(request, qs, tamanho=30):
-    return Paginator(qs, tamanho).get_page(request.GET.get("pagina"))
+def _pagina(request, qs, tamanho=30, parametro="pagina"):
+    return Paginator(qs, tamanho).get_page(request.GET.get(parametro))
 
 
 def _edita(request):
@@ -307,20 +308,17 @@ def despesa(request, pk):
     obj = _despesa(request, pk)
     tem_docs = tem_permissao(request.vinculo, "documentos.ver")
     fontes = _fontes_sociais(request)
-    etapas = obj.lancamentos.select_related("anterior", "responsavel", "compromisso")
-    consultas = Q(objeto=obj.pk) | Q(objeto__in=etapas.values("pk")) | Q(objeto__in=obj.conciliacoes.values("pk"))
-    consultas |= Q(objeto__in=obj.origens_sociais.values("pk"))
-    historico = Historico.objects.filter(consultas, municipio=request.municipio).select_related("responsavel")
-    linha_tempo = [{"data": h.criado_em, "descricao": h.evento, "usuario": h.responsavel.get_username(),
-                    "estado": h.estado if h.entidade == "despesa" else None} for h in historico]
+    etapas = obj.lancamentos.select_related("anterior", "responsavel", "compromisso").order_by("data", "criado_em", "pk")
+    conciliacoes = obj.conciliacoes.select_related("responsavel").order_by("data", "criado_em", "pk")
+    documentos = None
     if tem_docs:
-        from documentos.servicos import documentos_autorizados, eventos_despesa
-        linha_tempo.extend(eventos_despesa(obj, docs=documentos_autorizados(request)))
-    linha_tempo.sort(key=lambda entrada: entrada["data"], reverse=True)
+        from documentos.servicos import documentos_autorizados
+        documentos = documentos_autorizados(request)
+    linha_tempo = linha_do_tempo(obj, documentos, request.GET.get('pagina'))
     registrar_evento(request, "financeiro.despesa.consulta", pk)
     return render(request, "financeiro/despesa.html", {
-        "titulo": "Detalhe da despesa", "despesa": obj, "etapas": etapas, "resumo": resumo_despesa(obj),
-        "linha_tempo": _pagina(request, linha_tempo), "conciliacoes": obj.conciliacoes.select_related("responsavel"),
+        "titulo": "Detalhe da despesa", "despesa": obj, "etapas": _pagina(request, etapas, parametro="pagina_etapas"), "resumo": resumo_despesa(obj),
+        "linha_tempo": linha_tempo, "conciliacoes": _pagina(request, conciliacoes, parametro="pagina_conciliacoes"),
         "origens": _origens(obj, fontes), "permite_origens": bool(fontes),
         "tem_docs": tem_docs, "anexa": tem_permissao(request.vinculo, "documentos.editar"), "edita": _edita(request),
         "tipos": Lancamento.Tipo.choices,

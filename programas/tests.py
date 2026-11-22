@@ -176,3 +176,22 @@ class FluxosProgramasTests(TransactionTestCase):
             finally:
                 with connection.cursor() as cursor:
                     cursor.execute("RESET ROLE")
+
+    def test_lista_projeta_campos_exibidos_sem_parecer_ou_consulta_por_linha(self):
+        from django.test.utils import CaptureQueriesContext
+        from django.urls import reverse
+
+        Vinculo.objects.create(usuario=self.usuario, municipio=self.municipio, perfil='gestor')
+        SolicitacaoBeneficio.objects.bulk_create([SolicitacaoBeneficio(municipio=self.municipio, familia=self.familia,
+            cidadao=self.cidadao, tipo=self.tipo, quantidade_solicitada=1, responsavel=self.usuario,
+            justificativa_tecnica='Parecer que só deve ser lido na ficha') for _ in range(35)])
+        self.client.force_login(self.usuario)
+        with CaptureQueriesContext(connection) as consultas:
+            resposta = self.client.get(reverse('programas:beneficios'))
+        self.assertContains(resposta, self.familia.referencia, count=30)
+        self.assertNotContains(resposta, 'Parecer que só deve ser lido na ficha')
+        operacionais = [q['sql'] for q in consultas if 'FROM "programas_solicitacaobeneficio"' in q['sql'] and 'COUNT(' not in q['sql']]
+        self.assertEqual(len(operacionais), 1)
+        self.assertIn('LIMIT 30', operacionais[0])
+        for campo in ('regra_local', 'regra_aplicada', 'justificativa_tecnica', 'observacoes'):
+            self.assertNotIn(f'"{campo}"', operacionais[0])

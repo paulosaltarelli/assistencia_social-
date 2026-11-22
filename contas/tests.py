@@ -6,6 +6,7 @@ from django.core.management import call_command
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.db import connection, transaction
 from django.test import Client, SimpleTestCase, TransactionTestCase, override_settings
+from django.test.utils import CaptureQueriesContext
 from django.urls import reverse
 from atendimentos.acesso import tem_permissao
 from atendimentos.models import Municipio, Vinculo
@@ -140,6 +141,13 @@ class ContasBancoTests(TransactionTestCase):
         self.externo.refresh_from_db()
         self.assertTrue(self.externo.is_active)
 
+    def test_leitura_de_profissional_sem_travar_equipe(self):
+        self.app_role()
+        with CaptureQueriesContext(connection) as consultas:
+            resposta = self.client.get(reverse("contas:profissional", args=[self.alvo_vinculo.pk]))
+        self.assertEqual(resposta.status_code, 200)
+        self.assertFalse(any("FOR UPDATE" in consulta["sql"] for consulta in consultas))
+
     def test_delegacao_sensivel_negada_mesmo_com_contas_gerir(self):
         self.app_role()
         resposta = self.client.post(reverse("contas:novo"), {"username": "novo-ficticio", "nome": "Profissional fictício", "perfil": "financeiro"})
@@ -205,6 +213,11 @@ class ContasBancoTests(TransactionTestCase):
         self.assertEqual(resposta.status_code, 200)
         self.assertEqual(resposta["Content-Type"], "image/png")
         self.assertIn("no-store", resposta["Cache-Control"])
+        original = resposta.content
+        configuracao = reverse("contas:configurar")
+        self.assertContains(self.client.get(configuracao), "Remover o brasão atual")
+        self.assertEqual(self.client.post(configuracao, {"nome": "Secretaria Renomeada"}).status_code, 302)
+        self.assertEqual(self.client.get(reverse("contas:brasao")).content, original)
         self.client.force_login(self.externo)
         self.assertEqual(self.client.get(reverse("contas:brasao")).status_code, 404)
 

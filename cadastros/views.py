@@ -133,10 +133,11 @@ def familia(request, pk):
     familia = get_object_or_404(Familia, pk=pk, municipio=request.municipio)
     complemento = ComplementoFamilia.objects.filter(familia=familia, municipio=request.municipio).select_related('responsavel').first()
     membros = Cidadao.objects.filter(municipio=request.municipio, familia=familia).select_related('complemento').order_by('nome', 'id')
-    quantidade = membros.count()
+    pagina_membros = paginar(request, membros, 'membros')
+    quantidade = pagina_membros.paginator.count
     per_capita = complemento.renda_mensal / quantidade if complemento and complemento.renda_mensal is not None and quantidade else None
     registrar_evento(request, 'consulta_ficha_familia', objeto=familia.pk)
-    return render(request, 'cadastros/familia.html', {'titulo': familia.referencia, 'familia': familia, 'complemento': complemento, 'membros': paginar(request, membros, 'membros'), 'quantidade': quantidade, 'per_capita': per_capita, 'historico': historico(request, familia.pk), 'integracoes': integracoes(request, familia=familia)})
+    return render(request, 'cadastros/familia.html', {'titulo': familia.referencia, 'familia': familia, 'complemento': complemento, 'membros': pagina_membros, 'quantidade': quantidade, 'per_capita': per_capita, 'historico': historico(request, familia.pk), 'integracoes': integracoes(request, familia=familia)})
 
 
 @sensitive_post_parameters()
@@ -168,11 +169,13 @@ def pessoa_form(request, pk=None):
                         pessoa = Cidadao.objects.create(municipio=request.municipio, familia=familia, nome=dados['nome'])
                     complemento = form.save(commit=False)
                     complemento.municipio, complemento.cidadao = request.municipio, pessoa
+                    campos = ['nascimento', 'telefone', 'parentesco', 'atualizado']
                     for tipo in ['cpf', 'nis']:
                         if dados[tipo]:
                             setattr(complemento, f'{tipo}_hash', indice(request.municipio.pk, tipo, dados[tipo]))
                             setattr(complemento, f'{tipo}_ultimos', dados[tipo][-4:])
-                    complemento.save()
+                            campos.extend([f'{tipo}_hash', f'{tipo}_ultimos'])
+                    complemento.save(update_fields=None if complemento._state.adding else campos)
                     registrar(request, pessoa.pk, 'pessoa_atualizada' if pk else 'pessoa_criada', form.changed_data)
                 messages.success(request, 'Cadastro individual salvo.')
                 return redirect('cadastros:pessoa', pk=pessoa.pk)

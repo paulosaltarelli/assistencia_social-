@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView
 from django.db import connection, IntegrityError, transaction
+from django.db.models.functions import Length
 from django.http import HttpResponse, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
@@ -103,7 +104,7 @@ def inicio(request):
         "vinculo": vinculo, "profissionais": profissionais, "pode_gerir": pode_gerir,
         "pode_configurar": tem_permissao(vinculo, "configuracao.editar"),
         "permissoes": [PERMISSOES[codigo] for codigo in sorted(permissoes_efetivas(vinculo)) if codigo in PERMISSOES],
-        "secretaria": Secretaria.objects.filter(municipio=request.municipio).first(),
+        "secretaria": Secretaria.objects.only("email_oficial", "telefone").filter(municipio=request.municipio).first(),
     })
 
 
@@ -113,9 +114,11 @@ def inicio(request):
 @sensitive_post_parameters()
 @sensitive_variables()
 def profissional(request, pk=None):
-    # Serializa as alterações de contas do município, inclusive desativações.
-    vinculos = Vinculo.objects.select_for_update().filter(municipio=request.municipio)
-    list(vinculos.values_list("id", flat=True))
+    vinculos = Vinculo.objects.filter(municipio=request.municipio)
+    if request.method == "POST":
+        # Serializa as alterações de contas do município, inclusive desativações.
+        vinculos = vinculos.select_for_update()
+        list(vinculos.order_by("pk").values_list("id", flat=True))
     destino = get_object_or_404(vinculos.select_related("usuario"), pk=pk) if pk else None
     inicial = {}
     if destino:
@@ -173,7 +176,7 @@ def profissional(request, pk=None):
 @sensitive_variables()
 def acao(request, pk):
     vinculos = Vinculo.objects.select_for_update().filter(municipio=request.municipio)
-    list(vinculos.values_list("id", flat=True))
+    list(vinculos.order_by("pk").values_list("id", flat=True))
     destino = get_object_or_404(vinculos.select_related("usuario"), pk=pk)
     if destino.usuario_id == request.user.pk:
         return HttpResponseForbidden("Solicite a ação a outro responsável autorizado.")
@@ -208,7 +211,7 @@ def acao(request, pk):
 @municipal("configuracao.editar", post="configuracao.editar")
 @require_http_methods(["GET", "POST"])
 def configurar(request):
-    secretaria = Secretaria.objects.filter(municipio=request.municipio).first()
+    secretaria = Secretaria.objects.defer("brasao").annotate(tamanho_brasao=Length("brasao")).filter(municipio=request.municipio).first()
     form = SecretariaForm(request.POST if request.method == "POST" else None, request.FILES or None, instance=secretaria)
     if request.method == "POST" and form.is_valid():
         secretaria = form.save(commit=False)

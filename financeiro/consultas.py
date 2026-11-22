@@ -34,7 +34,7 @@ def filtros_financeiros(municipio, params, exercicio_atual=False):
     form = FiltrosFinanceiros(params)
     for nome in ["fonte", "fundo", "programa"]:
         model = form.fields[nome].queryset.model
-        form.fields[nome].queryset = model.objects.filter(municipio=municipio)
+        form.fields[nome].queryset = model.objects.filter(municipio=municipio).only("pk", "codigo", "nome")
     return form
 
 

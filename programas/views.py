@@ -37,10 +37,17 @@ def inicio(request):
 
 def lista(request, modelo, titulo, detalhe, choices, beneficio=False):
     registros = modelo.objects.filter(municipio=request.municipio).select_related("familia", "cidadao")
+    campos = ["id", "solicitado_em", "situacao", "familia__referencia", "cidadao__nome"]
     if beneficio:
         registros = registros.select_related("tipo")
-    if modelo == PedidoMaterial:
+        campos.append("tipo__nome")
+    elif modelo == PedidoMaterial:
         registros = registros.select_related("material")
+        campos.append("material__nome")
+    else:
+        campos.extend(["valor", "periodicidade"])
+    # A fila operacional precisa só dos campos usados pela tabela. Pareceres e regras ficam na ficha.
+    registros = registros.only(*campos)
     filtros = FiltroForm(request.POST if request.method == "POST" else request.GET or None, municipio=request.municipio, choices=choices, beneficio=beneficio)
     if filtros.is_bound:
         if filtros.is_valid():

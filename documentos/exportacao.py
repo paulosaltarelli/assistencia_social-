@@ -14,8 +14,35 @@ from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 from reportlab.platypus import Paragraph, SimpleDocTemplate
 from financeiro.models import Despesa, Lancamento
 
-from .models import Estado
+from .arquivos import LIMITE
+from .models import Estado, Versao
 from .servicos import todas_versoes
+
+
+def lotes_de_versoes(versoes):
+    lote = []
+    tamanho = 0
+    for versao in versoes:
+        if len(lote) >= 32 or tamanho + versao.tamanho > LIMITE:
+            yield lote
+            lote = []
+            tamanho = 0
+        lote.append(versao)
+        tamanho += versao.tamanho
+    if lote:
+        yield lote
+
+
+def ler_originais(municipio, versoes):
+    for lote in lotes_de_versoes(versoes):
+        ids = [versao.pk for versao in lote]
+        originais = dict(Versao.objects.filter(municipio=municipio, pk__in=ids).values_list("pk", "conteudo"))
+        for versao in lote:
+            original = originais.pop(versao.pk, None)
+            if original is None or len(original) != versao.tamanho or hashlib.sha256(original).hexdigest() != versao.sha256:
+                raise ValidationError("Falha na verificação de integridade. A exportação foi interrompida.")
+            yield versao, original
+            del original
 
 
 def arquivo_do_pacote(versao):
@@ -116,13 +143,10 @@ def preparar(municipio, documentos, filtros, incluir_originais, despesas=None):
             pacote.writestr("indice.pdf", conteudo_indice)
             pacote.writestr("quadro-financeiro.json", json.dumps(quadro, ensure_ascii=False, indent=2).encode("utf-8"))
             manifesto = []
-            for v in versoes:
+            for v, original in ler_originais(municipio, versoes):
                 caminho = arquivo_do_pacote(v)
-                # Materializa um original por vez; metadados e versão são imutáveis.
-                if hashlib.sha256(v.conteudo).hexdigest() != v.sha256:
-                    raise ValidationError("Falha na verificação de integridade. A exportação foi interrompida.")
-                pacote.writestr(caminho, bytes(v.conteudo))
-                del v.conteudo
+                pacote.writestr(caminho, original)
+                del original
                 manifesto.append({
                     "arquivo": caminho, "documento": str(v.documento_id), "despesa": str(v.documento.despesa_id),
                     "versao": v.sequencia, "nome": v.nome, "tamanho": v.tamanho, "categoria": v.documento.get_categoria_display(),

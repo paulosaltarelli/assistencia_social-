@@ -13,7 +13,7 @@
   <aside class="side">
     <a class="identity" href="{% url 'painel' %}" aria-label="Gestão Social Municipal, início"><span class="identity-mark" aria-hidden="true">GS</span><span>Gestão Social<small>Municipal</small></span></a>
     <nav aria-label="Módulos do sistema">{% include "menu_municipal.html" %}</nav>
-    <div class="assinatura">Desenvolvido por <img src="{% static 'atendimentos/vexo.png' %}" alt="Vexo"></div>
+    <div class="assinatura">Desenvolvido por <img src="{% static 'atendimentos/vexo.png' %}" alt="Vexo" loading="lazy" decoding="async"></div>
   </aside>
   <div class="center">
     <header class="municipal-top">
@@ -26,7 +26,7 @@
       {% if messages %}{% for message in messages %}<div class="notice {{ message.tags }}" {% if message.level >= 40 %}role="alert"{% else %}role="status"{% endif %}>{{ message }}</div>{% endfor %}{% endif %}
       {% block conteudo %}{% endblock %}
     </main>
-    <footer class="workspace-footer"><span>Gestão Social Municipal</span><span>Desenvolvido por <img src="{% static 'atendimentos/vexo.png' %}" alt="Vexo"></span></footer>
+    <footer class="workspace-footer"><span>Gestão Social Municipal</span><span>Desenvolvido por <img src="{% static 'atendimentos/vexo.png' %}" alt="Vexo" loading="lazy" decoding="async"></span></footer>
   </div>
 </div>
 </body>

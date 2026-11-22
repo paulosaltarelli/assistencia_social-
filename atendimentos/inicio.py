@@ -62,10 +62,14 @@ def inicio(request):
     if "vale.ver" in direitos:
         indicador("Beneficiários ativos do vale", ConcessaoVale.objects.filter(municipio=municipio, situacao="ativo").values("cidadao_id").distinct().count(), "programas:vales")
     if "materiais.ver" in direitos:
-        pedidos = PedidoMaterial.objects.filter(municipio=municipio)
-        indicador("Solicitações de materiais", pedidos.count(), "programas:pedidos")
-        indicador("Pedidos com entrega concluída", pedidos.filter(situacao="entregue").count(), "programas:pedidos")
-        pendencias.append(("Pedidos de material em avaliação", pedidos.filter(situacao__in=["solicitado", "analise"]).count(), reverse("programas:pedidos")))
+        pedidos = PedidoMaterial.objects.filter(municipio=municipio).aggregate(
+            total=Count("pk"),
+            entregues=Count("pk", filter=Q(situacao="entregue")),
+            em_avaliacao=Count("pk", filter=Q(situacao__in=["solicitado", "analise"])),
+        )
+        indicador("Solicitações de materiais", pedidos["total"], "programas:pedidos")
+        indicador("Pedidos com entrega concluída", pedidos["entregues"], "programas:pedidos")
+        pendencias.append(("Pedidos de material em avaliação", pedidos["em_avaliacao"], reverse("programas:pedidos")))
     financas = resumo_financeiro(municipio, {"ano": hoje.year}) if "financeiro.ver" in direitos else None
     registrar_evento(request, "visao_geral")
     return render(request, "inicio.html", {

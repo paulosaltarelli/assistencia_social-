@@ -21,6 +21,7 @@ from cadastros.localidades import CIDADE, distribuir_enderecos, pares_e_bairros
 from cadastros.models import AcompanhamentoAtendimento, ComplementoFamilia, ComplementoPessoa, NotaTecnica
 from programas.models import ConcessaoVale, Material, MovimentoEstoque, PedidoMaterial, SolicitacaoBeneficio, TipoBeneficio
 from programas.services import alterar_vale, decidir_beneficio, decidir_pedido, historico, movimentar_estoque, solicitar_beneficio
+from .cpfs import campos_cpf
 
 
 VERSAO = "vexo-social-demonstracao-v1"
@@ -122,10 +123,11 @@ def popular_cadastros(contexto):
             contexto.cidadaos.append(pessoa)
             integrantes.append(pessoa)
             idade = (22 + numero % 48) if posicao == 0 else (4 + (numero + posicao * 9) % 70)
+            identificacao = campos_cpf(contexto, numero, posicao)
             contexto.criar(ComplementoPessoa, f"pessoa/dados/{numero}/{posicao}", cidadao=pessoa,
                 nascimento=date(referencia.year - idade, 1 + (numero + posicao) % 12, 1 + numero % 27),
                 parentesco="Referência familiar" if posicao == 0 else "Integrante simulado",
-                telefone="", cpf_hash="", cpf_ultimos="", nis_hash="", nis_ultimos="")
+                telefone="", nis_hash="", nis_ultimos="", **identificacao)
         par = enderecos[(numero - 1) % len(enderecos)] if enderecos else None
         contexto.criar(ComplementoFamilia, f"familia/dados/{numero}", familia=familia,
             endereco=par["logradouro"] if par else f"{MARCA} Rua do cenário {numero:03d}", numero=str(numero),

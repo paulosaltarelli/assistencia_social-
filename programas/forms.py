@@ -108,9 +108,11 @@ class FiltroForm(forms.Form):
         super().__init__(*args, **kwargs)
         self.fields["situacao"].choices = [("", "Todas as situações"), *choices]
         usuarios = Vinculo.objects.filter(municipio=municipio).values("usuario_id")
-        self.fields["responsavel"].queryset = get_user_model().objects.filter(pk__in=usuarios).order_by("username")
+        usuario = get_user_model()
+        self.fields["responsavel"].queryset = usuario.objects.filter(pk__in=usuarios).only(
+            "pk", usuario.USERNAME_FIELD).order_by(usuario.USERNAME_FIELD)
         if beneficio:
-            self.fields["tipo"].queryset = TipoBeneficio.objects.filter(municipio=municipio)
+            self.fields["tipo"].queryset = TipoBeneficio.objects.filter(municipio=municipio).only("pk", "nome", "vigencia_inicio")
         else:
             self.fields.pop("tipo")
 

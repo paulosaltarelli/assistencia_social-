@@ -53,7 +53,7 @@ class DemonstracaoIntegradaTests(TransactionTestCase):
         self.assertEqual(Cidadao.objects.filter(municipio=self.municipio).count(), 280)
         self.assertEqual(Atendimento.objects.filter(municipio=self.municipio).count(), 348)
         self.assertEqual(len(list(AcompanhamentoAtendimento.objects.dates("data_efetiva", "month"))), 12)
-        self.assertEqual(ComplementoPessoa.objects.exclude(cpf_hash="").count(), 0)
+        self.assertEqual(ComplementoPessoa.objects.exclude(cpf_hash="").count(), 280)
         self.assertEqual(ComplementoPessoa.objects.exclude(nis_hash="").count(), 0)
         self.assertEqual(ComplementoPessoa.objects.exclude(telefone="").count(), 0)
         self.assertEqual(SolicitacaoBeneficio.objects.values("situacao").distinct().count(), 7)

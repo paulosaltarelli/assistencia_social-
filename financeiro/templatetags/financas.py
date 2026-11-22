@@ -13,7 +13,7 @@ def reais(valor):
 
 
 @register.simple_tag(takes_context=True)
-def pagina_url(context, numero):
+def pagina_url(context, numero, parametro="pagina"):
     query = context["request"].GET.copy()
-    query["pagina"] = numero
+    query[parametro or "pagina"] = numero
     return "?" + query.urlencode()

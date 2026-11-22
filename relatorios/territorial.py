@@ -10,6 +10,7 @@ import re
 import unicodedata
 from collections import Counter
 from datetime import date
+from functools import lru_cache
 from pathlib import Path, PurePosixPath
 
 from django.conf import settings
@@ -39,6 +40,18 @@ def limites_validos(bounds):
     return -180 <= oeste < leste <= 180 and -90 <= sul < norte <= 90
 
 
+@lru_cache(maxsize=16)
+def identidade_imagem(caminho, versao_arquivo):
+    """A versão no cache muda quando o arquivo é substituído ou modificado."""
+    with caminho.open("rb") as arquivo:
+        digest = hashlib.file_digest(arquivo, "sha256").hexdigest()
+        arquivo.seek(0)
+        with Image.open(arquivo) as imagem:
+            formato, tamanho = imagem.format, imagem.size
+            imagem.verify()
+    return digest, formato, tamanho
+
+
 def carregar_satelite(codigo, limite_sha256):
     try:
         dados = json.loads((DADOS / "satelite_santa_cruz_de_minas.json").read_text(encoding="utf-8"))
@@ -54,14 +67,15 @@ def carregar_satelite(codigo, limite_sha256):
         if caminho.is_absolute() or ".." in caminho.parts or caminho.suffix.lower() not in {".jpg", ".jpeg", ".png"}:
             return None
         arquivo = find(arquivo_static)
-        if not arquivo or Path(arquivo).stat().st_size > 25_000_000:
+        if not arquivo:
             return None
-        if hashlib.sha256(Path(arquivo).read_bytes()).hexdigest() != dados["sha256"]:
+        caminho = Path(arquivo)
+        stat = caminho.stat()
+        if stat.st_size > 25_000_000:
             return None
-        with Image.open(arquivo) as imagem:
-            if imagem.format not in {"JPEG", "PNG"} or imagem.size != (dados["largura"], dados["altura"]):
-                return None
-            imagem.verify()
+        digest, formato, tamanho = identidade_imagem(caminho, (stat.st_ino, stat.st_ctime_ns, stat.st_size))
+        if digest != dados["sha256"] or formato not in {"JPEG", "PNG"} or tamanho != (dados["largura"], dados["altura"]):
+            return None
         date.fromisoformat(dados["data_captura"][:10])
         if not dados.get("credito") or not dados.get("fonte") or not dados.get("url", "").startswith("https://"):
             return None

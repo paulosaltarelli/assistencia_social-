@@ -189,3 +189,56 @@ class ExecucaoFinanceiraTest(TransactionTestCase):
         self.assertTrue(all(v > 0 for _, v in recursos_por_origem(self.mun, {})))
         conjunto = Despesa.objects.filter(pk__in=[d.pk for d in primeiro["despesas"]])
         self.assertEqual(pendentes_de_conferencia(conjunto, None).count(), 30)
+
+    def test_linha_do_tempo_mista_pagina_no_banco_e_preserva_sigilo(self):
+        from datetime import timedelta
+        from uuid import uuid4
+        from django.test.utils import CaptureQueriesContext
+        from django.utils import timezone
+        from documentos.models import Categoria, Conferencia, Documento, Estado, Versao
+
+        for indice in range(35):
+            Historico.objects.create(municipio=self.mun, objeto=self.despesa.pk, responsavel=self.usuario,
+                                     entidade='despesa', evento=f'Alteração {indice:02d}', estado={'valor': '20.00'})
+        for nome, sigilo in [('publico.pdf', False), ('restrito.pdf', True)]:
+            doc = Documento.objects.create(municipio=self.mun, despesa=self.despesa, sigilo_tecnico=sigilo, categoria=Categoria.RECIBO)
+            versao = Versao.objects.create(municipio=self.mun, sequencia=1, operacao=uuid4(), documento=doc,
+                responsavel=self.usuario, nome=nome, mime='application/pdf', tamanho=1, sha256='0' * 64,
+                conteudo=b'x', criado_em=timezone.now() + timedelta(seconds=1))
+            Conferencia.objects.create(municipio=self.mun, versao=versao, situacao=Estado.CONFERIDO,
+                responsavel=self.usuario, criado_em=timezone.now() + timedelta(seconds=2))
+        self.client.force_login(self.usuario)
+        url = reverse('financeiro:despesa', args=[self.despesa.pk])
+        with CaptureQueriesContext(connection) as consultas:
+            pagina = self.client.get(url)
+        self.assertContains(pagina, 'Anexo · versão 1 · publico.pdf')
+        self.assertContains(pagina, 'Conferido · publico.pdf')
+        self.assertNotContains(pagina, 'restrito.pdf')
+        timeline = pagina.context['linha_tempo']
+        self.assertEqual(timeline.paginator.count, 38)
+        self.assertEqual(len(timeline), 30)
+        self.assertEqual(timeline[0]['descricao'], 'Conferido · publico.pdf')
+        sql = [q['sql'] for q in consultas if 'UNION ALL' in q['sql'] and 'LIMIT 30' in q['sql']]
+        self.assertEqual(len(sql), 1)
+        self.assertNotIn('"conteudo"', sql[0])
+        parte_final = self.client.get(url, {'pagina': 2}).context['linha_tempo']
+        self.assertEqual(len(parte_final), 8)
+        self.assertTrue({e['descricao'] for e in timeline}.isdisjoint(e['descricao'] for e in parte_final))
+        AjustePermissao.objects.create(vinculo=self.vinculo, municipio=self.mun, codigo='documentos.ver', permitido=False)
+        self.assertEqual(self.client.get(url).context['linha_tempo'].paginator.count, 36)
+
+    def test_etapas_e_conferencias_paginam_independentemente_do_total_e_da_linha_do_tempo(self):
+        from .models import Conciliacao
+        for indice in range(32):
+            self.etapa('empenho', '1', f'E-{indice:02d}')
+        Conciliacao.objects.bulk_create([
+            Conciliacao(municipio=self.mun, responsavel=self.usuario, despesa=self.despesa, data=DIA,
+                       situacao='conferido', referencia=f'CONT-{indice:02d}', observacoes='Ensaio') for indice in range(32)])
+        self.client.force_login(self.usuario)
+        resp = self.client.get(reverse('financeiro:despesa', args=[self.despesa.pk]),
+                               {'pagina_etapas': 2, 'pagina_conciliacoes': 2, 'pagina': 1})
+        self.assertEqual(resp.context['resumo']['empenho'], 32)
+        self.assertEqual(len(resp.context['etapas']), 2)
+        self.assertEqual(len(resp.context['conciliacoes']), 2)
+        self.assertEqual(len(resp.context['linha_tempo']), 30)
+        self.assertContains(resp, 'pagina_etapas=1&amp;pagina_conciliacoes=2&amp;pagina=1')

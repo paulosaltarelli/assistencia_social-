@@ -13,6 +13,7 @@ from django.core.exceptions import ValidationError
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.db import DatabaseError, connection, transaction
 from django.test import RequestFactory, SimpleTestCase, TestCase
+from django.test.utils import CaptureQueriesContext
 from django.urls import reverse
 from PIL import Image
 from pypdf import PdfReader, PdfWriter
@@ -20,8 +21,8 @@ from pypdf import PdfReader, PdfWriter
 from atendimentos.models import Municipio, Vinculo
 from financeiro.models import Despesa, Dotacao, Exercicio, Fonte, Fundo, Lancamento, Natureza, Programa, Receita
 from contas.models import AjustePermissao
-from .arquivos import Original, ScannerIndisponivel, receber, verificar_antivirus, verificar_assinaturas
-from .exportacao import preparar
+from .arquivos import LIMITE, Original, ScannerIndisponivel, receber, verificar_antivirus, verificar_assinaturas
+from .exportacao import lotes_de_versoes, preparar
 from .forms import ConferenciaForm, DocumentoForm
 from .links import link_original
 from .models import Documento, Versao
@@ -37,6 +38,14 @@ def pdf_ficticio():
 
 
 class VerificacaoDeArquivo(SimpleTestCase):
+    def test_lotes_de_exportacao_respeitam_bytes_e_quantidade(self):
+        tamanhos = [1] * 36 + [LIMITE, LIMITE // 2, LIMITE // 2]
+        versoes = [SimpleNamespace(tamanho=tamanho) for tamanho in tamanhos]
+        lotes = list(lotes_de_versoes(versoes))
+        self.assertEqual([len(lote) for lote in lotes], [32, 4, 1, 2])
+        self.assertEqual([v for lote in lotes for v in lote], versoes)
+        self.assertTrue(all(sum(v.tamanho for v in lote) <= LIMITE for lote in lotes))
+
     @patch("documentos.arquivos.verificar_antivirus")
     def test_formatos_preservam_bytes_e_digest(self, scan):
         foto = io.BytesIO()
@@ -182,6 +191,23 @@ class AcervoMunicipal(TestCase):
         self.client.force_login(self.user)
         resposta = self.client.get(reverse("documentos:prestacao"), HTTP_HOST="localhost", secure=True)
         self.assertEqual(resposta.status_code, 403)
+
+    def test_prestacao_busca_descricoes_na_mesma_consulta(self):
+        self.vinculo.perfil = "gestor"
+        self.vinculo.save(update_fields=["perfil"])
+        for codigo in ("financeiro.ver", "gestao.ver", "documentos.ver"):
+            AjustePermissao.objects.create(municipio=self.municipio, vinculo=self.vinculo, codigo=codigo, permitido=True)
+        self.client.force_login(self.user)
+        url = reverse("documentos:prestacao")
+        self.envio()
+        with CaptureQueriesContext(connection) as primeira:
+            self.assertContains(self.client.get(url, secure=True, HTTP_HOST="localhost"), self.despesa.descricao)
+        for _ in range(5):
+            self.envio()
+        with CaptureQueriesContext(connection) as varias:
+            resposta = self.client.get(url, secure=True, HTTP_HOST="localhost")
+            self.assertContains(resposta, self.despesa.descricao, count=6)
+        self.assertEqual(len(varias), len(primeira))
 
     @patch("documentos.arquivos.verificar_antivirus", side_effect=ScannerIndisponivel("Verificação indisponível."))
     def test_scanner_indisponivel_impede_gravacao(self, scan):
